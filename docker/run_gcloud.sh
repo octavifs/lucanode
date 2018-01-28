@@ -3,4 +3,4 @@ docker run \
     -v ~/lucanode/segmentation:/notebooks \
     -v ~/lucanode/.jupyter:/root/.jupyter \
     -v /mnt/DATASETS:/mnt/DATASETS \
-    octavifs/simpleelastix_python:ubuntu17.10-python3.6
+    octavifs/lucanode
