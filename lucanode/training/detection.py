@@ -16,11 +16,7 @@ def train(
     "Train the network from scratch or from a preexisting set of weights on the dataset"
     imgs_train = []
     imgs_mask_train = []
-    ct = 0
     for img_train, img_mask_train in loader.slices_with_nodules(ct_scans, lung_masks, nodule_masks):
-        ct += 1
-        if ct >= 10:
-            break
         imgs_train.append(img_train[:, :, np.newaxis])
         imgs_mask_train.append(img_mask_train[:, :, np.newaxis])
     imgs_train = np.array(imgs_train)
