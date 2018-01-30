@@ -6,14 +6,14 @@ LUNA_LUNG_MASK_EXTENSION = ".mhd"
 LUNA_NODULE_MASK_EXTENSION = ".nii.gz"
 
 
-def _id_luna(path, extension):
+def _id_luna(path: str, extension: str) -> str:
     return path.split("/")[-1].split(extension)[0]
 
-def id_ct_scan_luna(path):
+def id_ct_scan_luna(path: str) -> str:
     return _id_luna(path, LUNA_CT_SCAN_EXTENSION)
 
-def id_lung_mask_luna(path):
+def id_lung_mask_luna(path: str) -> str:
     return _id_luna(path, LUNA_LUNG_MASK_EXTENSION)
 
-def id_nodule_mask_luna(path):
+def id_nodule_mask_luna(path: str) -> str:
     return _id_luna(path, LUNA_NODULE_MASK_EXTENSION)
