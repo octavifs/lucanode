@@ -33,7 +33,7 @@ def train(
     model.fit(
         imgs_train,
         imgs_mask_train,
-        batch_size=32,
+        batch_size=16,
         epochs=10,
         verbose=1,
         validation_split=0.2,
