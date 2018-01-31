@@ -69,6 +69,6 @@ def evaluate(
     return model.evaluate(
         x=imgs_train,
         y=imgs_mask_train,
-        batch_size=4,
+        batch_size=1,
         verbose=1
     )
