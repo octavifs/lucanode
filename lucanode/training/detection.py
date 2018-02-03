@@ -1,8 +1,9 @@
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Iterator
 from keras.callbacks import ModelCheckpoint
 from lucanode import loader
 from lucanode.models.unet import Unet
 import numpy as np
+import SimpleITK as sitk
 
 
 def train(
@@ -12,11 +13,13 @@ def train(
     ct_scans: Tuple[str, Callable[[str], str]],
     lung_masks: Tuple[str, Callable[[str], str]],
     nodule_masks: Tuple[str, Callable[[str], str]],
+    img_filters: Iterator[Callable[[sitk.Image], sitk.Image]] = [],
 ):
     "Train the network from scratch or from a preexisting set of weights on the dataset"
     imgs_train = []
     imgs_mask_train = []
-    for img_train, img_mask_train in loader.slices_with_nodules(ct_scans, lung_masks, nodule_masks):
+    iterator = loader.slices_with_nodules(ct_scans, lung_masks, nodule_masks, img_filters)
+    for img_train, img_mask_train in iterator:
         imgs_train.append(img_train[:, :, np.newaxis])
         imgs_mask_train.append(img_mask_train[:, :, np.newaxis])
     imgs_train = np.array(imgs_train)

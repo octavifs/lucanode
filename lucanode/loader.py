@@ -1,4 +1,4 @@
-from typing import Tuple, Callable, Generator
+from typing import Tuple, Callable, Iterator
 from glob import glob
 import SimpleITK as sitk
 import numpy as np
@@ -9,7 +9,8 @@ def slices_with_nodules(
     ct_scans: Tuple[str, Callable[[str], str]],
     lung_masks: Tuple[str, Callable[[str], str]],
     nodule_masks: Tuple[str, Callable[[str], str]],
-) -> Generator[ Tuple[np.array, np.array], None, None ]:
+    img_filters: Iterator[Callable[[sitk.Image], sitk.Image]] = [],
+) -> Iterator[ Tuple[np.array, np.array] ]:
     """ Return a generator that yields slices in the format (input, output)
     """
     # Load paths
@@ -23,8 +24,12 @@ def slices_with_nodules(
     images_to_load = [ (ct_scans[id], lung_masks[id], nodule_masks[id]) for id in ids ]
     for (ct_scan_path, lung_mask_path, nodule_mask_path) in \
         tqdm(images_to_load, desc="Loading slices from images:"):
+        # Apply image filters to ct_scan, if any
+        ct_scan_sitk_img = sitk.ReadImage(ct_scan_path)
+        for img_filter in img_filters:
+            ct_scan_sitk_img = img_filter(ct_scan_sitk_img)
         # Load images (not ArrayView, since img goes out of scope and then you have dead pointer)
-        ct_scan_img = sitk.GetArrayFromImage(sitk.ReadImage(ct_scan_path))
+        ct_scan_img = sitk.GetArrayFromImage(ct_scan_sitk_img)
         lung_mask_img = sitk.GetArrayFromImage(sitk.ReadImage(lung_mask_path))
         nodule_mask_img = sitk.GetArrayFromImage(sitk.ReadImage(nodule_mask_path))
 
