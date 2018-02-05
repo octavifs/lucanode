@@ -4,6 +4,7 @@ from lucanode import loader
 from lucanode.models.unet import Unet
 import numpy as np
 import SimpleITK as sitk
+from collections import Counter
 
 
 def train(
@@ -25,6 +26,17 @@ def train(
     imgs_train = np.array(imgs_train)
     imgs_mask_train = np.array(imgs_mask_train)
 
+    # Now calculate average class weights
+    imgs_mask_1d = imgs_mask_train.ravel()
+    total_pixels_masks = len(imgs_mask_1d)
+    class_count = Counter(imgs_mask_1d)
+    class_weights = {
+        -1: 0,  # Essentially, I don't care for pixels outside the lung
+         0: 1,  # Pixels inside the lung
+         1: class_count[0] / class_count[1]  # Nodule pixels. Represent them at the same level that
+                                             # those of the lung
+    }
+
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
         monitor='loss',
@@ -37,8 +49,9 @@ def train(
         imgs_train,
         imgs_mask_train,
         batch_size=4,
-        epochs=10,
+        epochs=50,
         verbose=1,
+        class_weight=class_weights,
         validation_split=0.2,
         shuffle=True,
         callbacks=[model_checkpoint]
