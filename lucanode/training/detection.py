@@ -41,13 +41,9 @@ def train(
     # Now calculate average class weights
     imgs_mask_1d = imgs_mask_train.ravel()
     class_count = Counter(imgs_mask_1d)
-    class_weights = {
-         0: 1,  # Non-nodule pixels
-         1: class_count[0] / class_count[1]  # Nodule pixels. Represent them at the same level that
-                                             # those of the lung
-    }
-    class_weights_tx = np.vectorize(lambda x: class_weights[x])
-    sample_weights = np.squeeze(class_weights_tx(imgs_mask_train))
+    sample_weights = np.ones(imgs_mask_train.shape)
+    sample_weights[imgs_mask_train == 1] = class_count[0] / class_count[1]
+    sample_weights = np.squeeze(sample_weights)
 
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
