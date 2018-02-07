@@ -1,5 +1,5 @@
 from keras.models import *
-from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D, Reshape
+from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Reshape
 from keras.optimizers import *
 from lucanode.metrics import f1, precision, recall
 
