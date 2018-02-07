@@ -13,7 +13,7 @@ def slices_with_nodules(
 ) -> Iterator[ Tuple[np.array, np.array] ]:
     """ Return a generator that yields slices in the format (input, output)
     """
-    # Load paths
+
     ct_scans = { ct_scans[1](path): path for path in glob(ct_scans[0]) }
     lung_masks = { lung_masks[1](path): path for path in glob(lung_masks[0]) }
     nodule_masks = { nodule_masks[1](path): path for path in glob(nodule_masks[0]) }
@@ -33,18 +33,12 @@ def slices_with_nodules(
         lung_mask_img = sitk.GetArrayFromImage(sitk.ReadImage(lung_mask_path))
         nodule_mask_img = sitk.GetArrayFromImage(sitk.ReadImage(nodule_mask_path))
 
-        # Make sure the masks only contain boolean values
+        # Make sure the masks only contain boolean values [0, 1] ints
         lung_mask_img = lung_mask_img.astype(np.bool).astype(np.int8)
         nodule_mask_img = nodule_mask_img.astype(np.bool).astype(np.int8)
 
         # Apply lung mask to the ct scan
         ct_scan_img *= lung_mask_img
-
-        # Get mask combining nodule and lung
-        # -1: non-lung
-        #  0: lung tissue
-        #  1: nodule tissue
-        combined_mask_img = (lung_mask_img - 1) + nodule_mask_img
 
         # Get slice idxs on which a nodule appears
         z_idxs_with_nodules = np.argwhere(np.any(nodule_mask_img, axis=(2,1))).ravel()
@@ -53,5 +47,5 @@ def slices_with_nodules(
         for z_idx in z_idxs_with_nodules:
             # Specifically copy the slice. That way the rest of the image can be garbage collected
             input_arr = ct_scan_img[z_idx, :, :].copy()
-            output_arr = combined_mask_img[z_idx, :, :].copy()
+            output_arr = nodule_mask_img[z_idx, :, :].copy()
             yield (input_arr, output_arr)
