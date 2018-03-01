@@ -1,8 +1,12 @@
+from pathlib import Path
 from typing import Tuple, Callable, Iterator
 from glob import glob
 import SimpleITK as sitk
 import numpy as np
 from tqdm import tqdm
+from keras.utils import Sequence
+from math import ceil
+from lucanode import augmentation
 
 
 def slices_with_nodules(
@@ -49,3 +53,54 @@ def slices_with_nodules(
             input_arr = ct_scan_img[z_idx, :, :].copy()
             output_arr = nodule_mask_img[z_idx, :, :].copy()
             yield (input_arr, output_arr)
+
+
+class LunaSequence(Sequence):
+    def __init__(self, df, data_array, batch_size, do_augmentation=True):
+        """
+        Dataset loader to use when called via model.fit_generator
+        :param df: Pandas dataframe containing data_array indexes
+        :param data_array: mmapped numpy arrat referencing to the slices
+        :param batch_size: integer (how many items will __getitem__ return
+        """
+        # Augment dataframe with transformations and shuffle it in random order
+        if do_augmentation:
+            df = augmentation.augment_dataframe(df)
+        self.df = df.sample(frac=1)
+        self.data_array = data_array
+        self.batch_size = batch_size
+
+    def __len__(self):
+        return ceil(len(self.df) / self.batch_size)
+
+    def _get_batch(self, idx):
+        rows = self.df.iloc[idx * self.batch_size: (idx + 1) * self.batch_size]
+        arr_idxs = [e.original_idx for e in rows]
+        return rows, self.data_array[arr_idxs]
+
+    @staticmethod
+    def _apply_augmentation(rows, slices):
+        for row, slc in zip(rows, slices):
+            row_dict = row.to_dict()
+            yield augmentation.apply_chained_transformations(slc, row_dict)
+
+    @staticmethod
+    def _split_scan_from_mask(batch):
+        for slc in batch:
+            ct = slc[0, :, :]
+            lung_mask = slc[0, :, :].astype(np.bool).astype(np.int32)
+            nodule_mask = slc[2, :, :].astype(np.bool).astype(np.float32)
+            yield (ct * lung_mask, nodule_mask)
+
+    def __getitem__(self, idx):
+        batch = self._apply_augmentation(self._get_batch(idx))
+
+        batch_x = []
+        batch_y = []
+        for slice_ct, slice_nodule in self._split_scan_from_mask(batch):
+            batch_x.append(slice_ct)
+            batch_y.append(slice_nodule)
+
+        batch_x = np.array(batch_x)
+        batch_y = np.array(batch_y)
+        return batch_x, batch_y

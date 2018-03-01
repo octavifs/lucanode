@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.ndimage.interpolation import zoom
 import itertools
+import collections
 
 
 class Transformer(ABC):
@@ -166,6 +167,20 @@ TRANSFORMATIONS = {
     "rotate": {"class": RotateTransform, "values": [0, 90, 180, 270]},
     "zoom": {"class": ZoomTransform, "values": [0.8, 0.9, 1.0, 1.1, 1.2]},
 }
+
+
+def apply_chained_transformations(self, data, transformations, available_transformations=TRANSFORMATIONS):
+    self.data = data
+    self.transformation_pipeline = []
+
+    for k, v in transformations.items():
+        if k not in available_transformations:
+            pass
+        transformation_class = available_transformations[k]["class"]
+        if not isinstance(v, collections.Iterable):
+            v = [v]
+        data = transformation_class(data).apply(*v)
+    return data
 
 
 def _merge_dicts(*dict_args):

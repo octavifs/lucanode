@@ -7,7 +7,7 @@ import SimpleITK as sitk
 from collections import Counter
 
 def _yield_until(iterator, max_iterations=None):
-    "Yield until iterator is exhausted or max_iterations is reached "
+    "Yield until iterator is exhausted or max_iterations is reached"
     if max_iterations is None:
         yield from iterator
     else:
@@ -17,7 +17,7 @@ def _yield_until(iterator, max_iterations=None):
 def train(
     input_weights_file: str,
     output_weights_file: str,
-    img_shape: Tuple[int, int], 
+    img_shape: Tuple[int, int],
     ct_scans: Tuple[str, Callable[[str], str]],
     lung_masks: Tuple[str, Callable[[str], str]],
     nodule_masks: Tuple[str, Callable[[str], str]],
@@ -51,7 +51,7 @@ def train(
         verbose=1,
         save_best_only=True
     )
-    
+
     model = Unet(*img_shape)
     model.fit(
         imgs_train,
@@ -61,6 +61,37 @@ def train(
         verbose=1,
         sample_weight=sample_weights,
         validation_split=0.2,
+        shuffle=True,
+        callbacks=[model_checkpoint]
+    )
+    return model
+
+
+def train_generator(
+        metadata_df,
+        slices_array,
+        output_weights_file
+):
+    "Train the network from scratch or from a preexisting set of weights on the dataset"
+    training_df = metadata_df[metadata_df["export_idx"] % 10 < 7]
+    validation_df = metadata_df[(metadata_df["export_idx"] % 10 < 9) & (metadata_df["export_idx"] % 10 >= 7)]
+    training_loader = loader.LunaSequence(training_df, slices_array, 5, True)
+    validation_loader = loader.LunaSequence(validation_df, slices_array, 5, False)
+
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+
+    model = Unet(512, 512)
+    model.fit_generator(
+        generator=training_loader,
+        epochs=5,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
         shuffle=True,
         callbacks=[model_checkpoint]
     )
