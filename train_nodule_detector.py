@@ -4,8 +4,15 @@ import pandas as pd
 import numpy as np
 from lucanode.training import detection
 
+# Configure tensorflow for memory growth (instead of preallocating upfront)
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
+
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description='Train nodule detection neural network')
     parser.add_argument('dataset_metadata', type=str, help="path where the csv metadata of the luna dataset is stored")
     parser.add_argument('dataset_array', type=str, help="path where the np mmaped array of the luna dataset is stored")
