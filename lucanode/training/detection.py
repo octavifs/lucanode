@@ -70,13 +70,14 @@ def train(
 def train_generator(
         metadata_df,
         slices_array,
-        output_weights_file
+        output_weights_file,
+        batch_size=5
 ):
     "Train the network from scratch or from a preexisting set of weights on the dataset"
     training_df = metadata_df[metadata_df["export_idx"] % 10 < 7]
     validation_df = metadata_df[(metadata_df["export_idx"] % 10 < 9) & (metadata_df["export_idx"] % 10 >= 7)]
-    training_loader = loader.LunaSequence(training_df, slices_array, 5, True)
-    validation_loader = loader.LunaSequence(validation_df, slices_array, 5, False)
+    training_loader = loader.LunaSequence(training_df, slices_array, batch_size, True)
+    validation_loader = loader.LunaSequence(validation_df, slices_array, batch_size, False)
 
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
