@@ -13,5 +13,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     dataset_metadata_df = pd.read_csv(args.dataset_metadata)
+    dataset_metadata_df = dataset_metadata_df[dataset_metadata_df["plane"] == "axial"]
     dataset_array = np.load(args.dataset_array, mmap_mode='r')
     detection.train_generator(dataset_metadata_df, dataset_array, args.weights_file_output)

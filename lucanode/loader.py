@@ -74,8 +74,9 @@ class LunaSequence(Sequence):
         return ceil(len(self.df) / self.batch_size)
 
     def _get_batch(self, idx):
-        rows = self.df.iloc[idx * self.batch_size: (idx + 1) * self.batch_size]
-        arr_idxs = [e.original_idx for e in rows]
+        sliced_df = self.df.iloc[idx * self.batch_size: (idx + 1) * self.batch_size]
+        rows = [r for _, r in sliced_df.iterrows()]
+        arr_idxs = [r.original_idx for r in rows]
         return rows, self.data_array[arr_idxs]
 
     @staticmethod
@@ -87,13 +88,15 @@ class LunaSequence(Sequence):
     @staticmethod
     def _split_scan_from_mask(batch):
         for slc in batch:
-            ct = slc[0, :, :]
-            lung_mask = slc[0, :, :].astype(np.bool).astype(np.int32)
-            nodule_mask = slc[2, :, :].astype(np.bool).astype(np.float32)
+            slc = slc[:, :, :, np.newaxis]  # Necessary for conv layer
+            ct = slc[0, :, :, :]
+            lung_mask = slc[0, :, :, :].astype(np.bool).astype(np.int32)
+            nodule_mask = slc[2, :, :, :].astype(np.bool).astype(np.float32)
+
             yield (ct * lung_mask, nodule_mask)
 
     def __getitem__(self, idx):
-        batch = self._apply_augmentation(self._get_batch(idx))
+        batch = self._apply_augmentation(*self._get_batch(idx))
 
         batch_x = []
         batch_y = []

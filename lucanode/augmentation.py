@@ -169,13 +169,10 @@ TRANSFORMATIONS = {
 }
 
 
-def apply_chained_transformations(self, data, transformations, available_transformations=TRANSFORMATIONS):
-    self.data = data
-    self.transformation_pipeline = []
-
+def apply_chained_transformations(data, transformations, available_transformations=TRANSFORMATIONS):
     for k, v in transformations.items():
         if k not in available_transformations:
-            pass
+            continue
         transformation_class = available_transformations[k]["class"]
         if not isinstance(v, collections.Iterable):
             v = [v]
