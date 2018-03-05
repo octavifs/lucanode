@@ -71,7 +71,8 @@ def train_generator(
         metadata_df,
         slices_array,
         output_weights_file,
-        batch_size=5
+        batch_size=5,
+        num_epochs=5
 ):
     "Train the network from scratch or from a preexisting set of weights on the dataset"
     training_df = metadata_df[metadata_df["export_idx"] % 10 < 7]
@@ -89,7 +90,7 @@ def train_generator(
     model = Unet(512, 512)
     model.fit_generator(
         generator=training_loader,
-        epochs=5,
+        epochs=num_epochs,
         verbose=1,
         validation_data=validation_loader,
         use_multiprocessing=True,
