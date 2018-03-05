@@ -1,7 +1,8 @@
 from keras.models import *
 from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Reshape
 from keras.optimizers import *
-from lucanode.metrics import f1, precision, recall
+from lucanode.metrics import dice_coef, dice_coef_loss
+
 
 def Unet(num_rows: int, num_cols: int) -> Model:
     inputs = Input((num_rows, num_cols, 1))
@@ -57,9 +58,9 @@ def Unet(num_rows: int, num_cols: int) -> Model:
     model = Model(inputs=[inputs], outputs=[conv10])
 
     model.compile(
-        optimizer=Adam(lr=1e-4),
-        loss='binary_crossentropy',
-        metrics=[f1, precision, recall],
+        optimizer=Adam(lr=1e-3),
+        loss=dice_coef_loss,
+        metrics=[dice_coef],
         sample_weight_mode='temporal',
     )
 
