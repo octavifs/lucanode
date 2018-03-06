@@ -96,12 +96,17 @@ class LunaSequence(Sequence):
 
             yield (masked_ct, nodule_mask)
 
+    @staticmethod
+    def _normalize(arr):
+        return (arr - arr.mean()) / arr.std()
+
     def __getitem__(self, idx):
         batch = self._apply_augmentation(*self._get_batch(idx))
 
         batch_x = []
         batch_y = []
         for slice_ct, slice_nodule in self._split_scan_from_mask(batch):
+            slice_ct = self._normalize(slice_ct)
             batch_x.append(slice_ct)
             batch_y.append(slice_nodule)
 
