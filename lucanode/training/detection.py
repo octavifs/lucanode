@@ -74,7 +74,8 @@ def train_generator(
         batch_size=5,
         num_epochs=5,
         initial_epoch=0,
-        initial_weights=None
+        initial_weights=None,
+        use_small_network=False,
 ):
     "Train the network from scratch or from a preexisting set of weights on the dataset"
     training_df = metadata_df[metadata_df["export_idx"] % 10 < 7]
@@ -89,7 +90,11 @@ def train_generator(
         save_best_only=True
     )
 
-    model = Unet(512, 512)
+    if use_small_network:
+        model = Unet(400, 400)
+    else:
+        model = Unet(512, 512)
+
     if initial_weights:
         model.load_weights(initial_weights)
     model.fit_generator(

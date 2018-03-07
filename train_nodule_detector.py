@@ -25,6 +25,7 @@ if __name__ == '__main__':
                         help="Epoch the training should restart from. Useful if passing --initial-weights")
     parser.add_argument('--initial-weights', dest='initial_weights', type=str, default=None, action='store',
                         help="Initial weights to load into the network (.h5 file path)")
+    parser.add_argument('--use-small-network', dest='use_small_network', action='store_true', default=False)
     args = parser.parse_args()
 
     dataset_metadata_df = pd.read_csv(args.dataset_metadata)
@@ -38,5 +39,6 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
         num_epochs=args.num_epochs,
         initial_epoch=args.initial_epoch,
-        initial_weights=args.initial_weights
+        initial_weights=args.initial_weights,
+        use_small_network=args.use_small_network,
     )
