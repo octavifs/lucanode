@@ -26,10 +26,11 @@ if __name__ == '__main__':
     parser.add_argument('--initial-weights', dest='initial_weights', type=str, default=None, action='store',
                         help="Initial weights to load into the network (.h5 file path)")
     parser.add_argument('--use-small-network', dest='use_small_network', action='store_true', default=False)
+    parser.add_argument('--plane', dest='plane', default="axial")
     args = parser.parse_args()
 
     dataset_metadata_df = pd.read_csv(args.dataset_metadata)
-    dataset_metadata_df = dataset_metadata_df[dataset_metadata_df["plane"] == "axial"]
+    dataset_metadata_df = dataset_metadata_df[dataset_metadata_df["plane"] == args.plane]
     dataset_array = np.load(args.dataset_array, mmap_mode='r')
 
     detection.train_generator(
