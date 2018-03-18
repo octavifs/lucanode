@@ -92,7 +92,7 @@ class LunaSequence(Sequence):
             ct = slc[0, :, :, :]
             lung_mask = slc[0, :, :, :].astype(np.bool).astype(np.int32)
             nodule_mask = slc[2, :, :, :].astype(np.bool).astype(np.float32)
-            masked_ct = ct * lung_mask + (lung_mask-2)*4000
+            masked_ct = ct * lung_mask + (lung_mask-1)*4000
 
             yield (masked_ct, nodule_mask)
 
