@@ -12,13 +12,13 @@ TEST_SPLIT_PERCENT = 0.9
 
 def split_dataset(metadata_df):
     dataset_length = len(metadata_df)
-    validation_split_idx = dataset_length // VALIDATION_SPLIT_PERCENT
-    test_split_idx = dataset_length // TEST_SPLIT_PERCENT
+    validation_split_idx = int(dataset_length * VALIDATION_SPLIT_PERCENT)
+    test_split_idx = int(dataset_length * TEST_SPLIT_PERCENT)
 
     training_df = metadata_df[metadata_df["export_idx"] < validation_split_idx]
     validation_df = metadata_df[
         (metadata_df["export_idx"] < test_split_idx) &
-        (metadata_df["export_idx"] % 10 >= validation_split_idx)
+        (metadata_df["export_idx"] >= validation_split_idx)
     ]
     return training_df, validation_df
 
