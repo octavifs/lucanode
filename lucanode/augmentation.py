@@ -165,7 +165,7 @@ class DisplacementTransform(Transformer):
 TRANSFORMATIONS = {
     "flip": {"class": FlipXTransform, "values": [False, True]},
     "rotate": {"class": RotateTransform, "values": [0, 90, 180, 270]},
-    "zoom": {"class": ZoomTransform, "values": [0.8, 0.9, 1.0, 1.1, 1.2]},
+    "zoom": {"class": ZoomTransform, "values": [0.9, 1.0, 1.1]},
 }
 
 
