@@ -96,12 +96,10 @@ class LunaSequence(Sequence):
         return filtered_df
 
     def _get_batch(self, idx):
-        sliced_df = self.df.iloc[idx * self.batch_size: (idx + 1) * self.batch_size]
+        sliced_df = self.df.iloc[idx * self.batch_size:(idx + 1) * self.batch_size]
         rows = [r for _, r in sliced_df.iterrows()]
-        pre_arr_idxs = [r.original_idx - 1 for r in rows]
-        arr_idxs = [r.original_idx for r in rows]
-        post_arr_idxs = [r.original_idx + 1 for r in rows]
-        return rows, self.data_array[pre_arr_idxs], self.data_array[arr_idxs], self.data_array[post_arr_idxs]
+        arr_idxs = np.array([r.export_idx for r in rows])
+        return rows, self.data_array[arr_idxs - 1], self.data_array[arr_idxs], self.data_array[arr_idxs + 1]
 
     @staticmethod
     def _apply_augmentation(rows, pre_slices, slices, post_slices):
@@ -120,7 +118,7 @@ class LunaSequence(Sequence):
             nodule_mask_arr = []
             for s in [pre_slc, slc, post_slc]:
                 ct = s[0, :, :]
-                lung_mask = s[0, :, :].astype(np.bool).astype(np.int32)
+                lung_mask = s[1, :, :].astype(np.bool).astype(np.int32)
                 nodule_mask = s[2, :, :].astype(np.bool).astype(np.float32)
                 masked_ct = ct * lung_mask + (lung_mask-1)*4000
                 # Add them as a channel
