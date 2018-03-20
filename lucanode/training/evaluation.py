@@ -56,13 +56,14 @@ def evaluate_generator(
     if export_results_folder is not None:
         num_rows = len(test_df)
         results_folder_path = Path(export_results_folder)
-        figure_paths = [str(results_folder_path / ("%06d" % (idx,))) + ".png" for idx in range(num_rows)]
         rows_gen = (e[1] for e in test_df.iterrows())
         x_gen = (e[0] for e in test_loader)
         y_gen = (e[1] for e in test_loader)
         print("Exporting results on all test slices...")
-        args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr, figure_paths)]
-        args_arr = sorted(args_arr, reverse=True)  # Sort in descending order, by loss (worst slices first)
+        args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr)]
+        args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
+        figure_paths = [str(results_folder_path / ("%06d" % (idx,))) + ".png" for idx in range(num_rows)]
+        args_arr = [(*args, figure_path) for args, figure_path in zip(args_arr, figure_paths)]
         export_arr = []
         export_columns = ["loss", "plot_image", "export_idx", "original_idx", "plane", "seriesuid"]
         for args in tqdm(args_arr):
@@ -118,8 +119,7 @@ def calculate_results_per_slice(loss, df_row, x, y, pred, figure_path):
     plt.suptitle("loss: %f; export_idx: %d, original_idx: %d, plane: %s; seriesuid: %s" %
                  (loss, df_row.export_idx, df_row.original_idx, df_row.plane, df_row.seriesuid))
     plt.savefig(figure_path, bbox_inches='tight')
-
-    return None
+    plt.close()
 
 
 def draw_nodule_contour(ax, nodule_mask, color):
