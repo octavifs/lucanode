@@ -11,7 +11,7 @@ def train_generator(
         output_weights_file,
         batch_size=5,
         num_epochs=5,
-        initial_epoch=0,
+        last_epoch=0,
         initial_weights=None,
         use_small_network=False,
 ):
@@ -37,7 +37,7 @@ def train_generator(
     model.fit_generator(
         generator=training_loader,
         epochs=num_epochs,
-        initial_epoch=initial_epoch,
+        initial_epoch=last_epoch,
         verbose=1,
         validation_data=validation_loader,
         use_multiprocessing=True,

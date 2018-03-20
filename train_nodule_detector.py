@@ -21,8 +21,8 @@ if __name__ == '__main__':
                         help="Training batch size")
     parser.add_argument('--num-epochs', dest='num_epochs', type=int, default=5, action="store",
                         help="Number of training epochs")
-    parser.add_argument('--initial-epoch', dest='initial_epoch', type=int, default=0, action='store',
-                        help="Epoch the training should restart from. Useful if passing --initial-weights")
+    parser.add_argument('--last-epoch', dest='last_epoch', type=int, default=0, action='store',
+                        help="Last finished epoch (picks up training from there). Useful if passing --initial-weights")
     parser.add_argument('--initial-weights', dest='initial_weights', type=str, default=None, action='store',
                         help="Initial weights to load into the network (.h5 file path)")
     parser.add_argument('--use-small-network', dest='use_small_network', action='store_true', default=False)
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         args.weights_file_output,
         batch_size=args.batch_size,
         num_epochs=args.num_epochs,
-        initial_epoch=args.initial_epoch,
+        last_epoch=args.last_epoch,
         initial_weights=args.initial_weights,
         use_small_network=args.use_small_network,
     )
