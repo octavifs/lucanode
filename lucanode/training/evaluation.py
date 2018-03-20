@@ -60,50 +60,59 @@ def evaluate_generator(
     overall_results_str = "Overall model results:\nloss mean: %f; std: %f; max: %f; min: %f\n" % \
           (loss_arr.mean(), loss_arr.std(), loss_arr.max(), loss_arr.min())
 
-    # Save predictions to a folder with pictures, a csv and shit
+    # Save predictions to a folder with pictures, a csv and the loss distribution on the test dataset
     if export_results_folder is not None:
-        num_rows = len(test_df)
-        results_folder_path = Path(export_results_folder)
-        results_folder_path.mkdir(parents=True, exist_ok=True)
-        rows_gen = (e[1] for e in test_df.iterrows())
-        x_gen = (e[0] for e in test_loader)
-        y_gen = (e[1] for e in test_loader)
-        print("Exporting results on all test slices...")
-        args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr)]
-        args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
-        figure_paths = [str(results_folder_path / ("%06d" % (idx,))) + ".png" for idx in range(num_rows)]
-        args_arr = [(*args, figure_path) for args, figure_path in zip(args_arr, figure_paths)]
-        export_arr = []
-        export_columns = ["loss", "plot_image", "export_idx", "original_idx", "plane", "seriesuid"]
-        # Export slice results as csv
-        for args in tqdm(args_arr):
-            df_row = args[1]
-            export_row = [
-                args[0],
-                Path(args[-1]).name,
-                df_row.export_idx,
-                df_row.original_idx,
-                df_row.plane,
-                df_row.seriesuid,
-            ]
-            export_arr.append(export_row)
-        pd.DataFrame(export_arr, columns=export_columns).to_csv((results_folder_path / 'results_slices.csv').open('w'))
-
-        # Export slice results as plots via multiprocessing
-        with Pool() as p:
-            with tqdm(total=num_rows) as progress_bar:
-                for _ in tqdm(p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr)):
-                    progress_bar.update()
-
-        # Plot loss histogram
-        loss_hist, bins = np.histogram(np.array(loss_arr), bins=20, range=(0, 1), density=True)
-        plt.figure(figsize=(7, 5))
-        plt.hist(loss_hist, bins)
-        plt.title(overall_results_str)
-        plt.savefig(str(results_folder_path / 'results_overall.png'), bbox_inches='tight')
-        plt.close()
+        export_detailed_results(
+            export_results_folder,
+            loss_arr,
+            overall_results_str,
+            prediction_arr,
+            test_df,
+            test_loader
+        )
 
     print(overall_results_str)
+
+
+def export_detailed_results(export_results_folder, loss_arr, overall_results_str, prediction_arr, test_df, test_loader):
+    num_rows = len(test_df)
+    results_folder_path = Path(export_results_folder)
+    results_folder_path.mkdir(parents=True, exist_ok=True)
+    rows_gen = (e[1] for e in test_df.iterrows())
+    x_gen = (e[0] for e in test_loader)
+    y_gen = (e[1] for e in test_loader)
+    print("Exporting results on all test slices...")
+    args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr)]
+    args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
+    figure_paths = [str(results_folder_path / ("%06d" % (idx,))) + ".png" for idx in range(num_rows)]
+    args_arr = [(*args, figure_path) for args, figure_path in zip(args_arr, figure_paths)]
+    export_arr = []
+    export_columns = ["loss", "plot_image", "export_idx", "original_idx", "plane", "seriesuid"]
+    # Export slice results as csv
+    for args in args_arr:
+        df_row = args[1]
+        export_row = [
+            args[0],
+            Path(args[-1]).name,
+            df_row.export_idx,
+            df_row.original_idx,
+            df_row.plane,
+            df_row.seriesuid,
+        ]
+        export_arr.append(export_row)
+    pd.DataFrame(export_arr, columns=export_columns).to_csv((results_folder_path / 'results_slices.csv').open('w'))
+    # Plot loss histogram
+    loss_hist, bins = np.histogram(np.array(loss_arr), bins=20, range=(0, 1), density=True)
+    plt.figure(figsize=(7, 5))
+    plt.hist(loss_hist, bins)
+    plt.title(overall_results_str)
+    plt.savefig(str(results_folder_path / 'results_overall.png'), bbox_inches='tight')
+    plt.close()
+    # Export slice results as plots via multiprocessing
+    with Pool() as p:
+        with tqdm(total=num_rows) as progress_bar:
+            for _ in tqdm(p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr)):
+                progress_bar.update()
 
 
 def calculate_results_per_slice(loss, df_row, x, y, pred, figure_path):
