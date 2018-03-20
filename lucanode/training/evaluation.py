@@ -146,9 +146,8 @@ def calculate_results_per_slice(loss, df_row, x, y, pred, figure_path):
     ax4.set_yscale("log")
     ax4.legend()
 
-    plt.suptitle("loss: %f; export_idx: %d, original_idx: %d, plane: %s; seriesuid: %s" %
-                 (loss, df_row.export_idx, df_row.original_idx, df_row.plane, df_row.seriesuid))
-    plt.savefig(figure_path, bbox_inches='tight')
+    plt.suptitle("loss: %f; export_idx: %d" % (loss, df_row.export_idx))
+    plt.savefig(figure_path)
     plt.close()
 
 
