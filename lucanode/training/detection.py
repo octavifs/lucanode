@@ -1,23 +1,8 @@
-from typing import Tuple, Callable
-
-import numpy as np
 from keras.callbacks import ModelCheckpoint
 
 from lucanode import loader
+from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet
-
-VALIDATION_SPLIT_PERCENT = 0.7
-TEST_SPLIT_PERCENT = 0.9
-
-
-def split_dataset(metadata_df):
-    dataset_length = len(metadata_df)
-    validation_split_idx = int(dataset_length * VALIDATION_SPLIT_PERCENT)
-    test_split_idx = int(dataset_length * TEST_SPLIT_PERCENT)
-
-    training_df = metadata_df.iloc[:validation_split_idx]
-    validation_df = metadata_df[validation_split_idx:test_split_idx]
-    return training_df, validation_df
 
 
 def train_generator(
@@ -43,7 +28,7 @@ def train_generator(
     )
 
     if use_small_network:
-        model = Unet(400, 400)
+        model = Unet(*DEFAULT_UNET_SIZE)
     else:
         model = Unet(512, 512)
 
@@ -60,34 +45,3 @@ def train_generator(
         callbacks=[model_checkpoint]
     )
     return model
-
-
-def evaluate(
-    input_weights_file: str,
-    img_shape: Tuple[int, int],
-    ct_scans: Tuple[str, Callable[[str], str]],
-    lung_masks: Tuple[str, Callable[[str], str]],
-    nodule_masks: Tuple[str, Callable[[str], str]],
-):
-    """Train the network from scratch or from a preexisting set of weights on the dataset"""
-    imgs_train = []
-    imgs_mask_train = []
-    ct = 0
-    for img_train, img_mask_train in loader.slices_with_nodules(ct_scans, lung_masks, nodule_masks):
-        ct += 1
-        if ct >= 10:
-            break
-        imgs_train.append(img_train[:, :, np.newaxis])
-        imgs_mask_train.append(img_mask_train[:, :, np.newaxis])
-
-    imgs_train = np.array(imgs_train)
-    imgs_mask_train = np.array(imgs_mask_train)
-    
-    model = Unet(*img_shape)
-    model.load_weights(input_weights_file, by_name=True)
-    return model.evaluate(
-        x=imgs_train,
-        y=imgs_mask_train,
-        batch_size=1,
-        verbose=1
-    )
