@@ -111,7 +111,7 @@ def export_detailed_results(export_results_folder, loss_arr, overall_results_str
     # Export slice results as plots via multiprocessing
     with Pool() as p:
         with tqdm(total=num_rows) as progress_bar:
-            for _ in tqdm(p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr)):
+            for _ in p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr):
                 progress_bar.update()
 
 
