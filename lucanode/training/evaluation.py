@@ -1,4 +1,5 @@
 from pathlib import Path
+from multiprocessing import Pool
 
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
@@ -74,8 +75,8 @@ def evaluate_generator(
         args_arr = [(*args, figure_path) for args, figure_path in zip(args_arr, figure_paths)]
         export_arr = []
         export_columns = ["loss", "plot_image", "export_idx", "original_idx", "plane", "seriesuid"]
+        # Export slice results as csv
         for args in tqdm(args_arr):
-            calculate_results_per_slice(*args)
             df_row = args[1]
             export_row = [
                 args[0],
@@ -86,9 +87,13 @@ def evaluate_generator(
                 df_row.seriesuid,
             ]
             export_arr.append(export_row)
-
-        # Export slice results as csv
         pd.DataFrame(export_arr, columns=export_columns).to_csv((results_folder_path / 'results_slices.csv').open('w'))
+
+        # Export slice results as plots via multiprocessing
+        with Pool() as p:
+            with tqdm(total=num_rows) as progress_bar:
+                for _ in tqdm(p.imap_unordered(calculate_results_per_slice, args_arr)):
+                    progress_bar.update()
 
         # Plot loss histogram
         loss_hist, bins = np.histogram(np.array(loss_arr), bins=20, range=(0, 1), density=True)
