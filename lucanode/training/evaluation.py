@@ -92,7 +92,7 @@ def evaluate_generator(
         # Export slice results as plots via multiprocessing
         with Pool() as p:
             with tqdm(total=num_rows) as progress_bar:
-                for _ in tqdm(p.imap_unordered(calculate_results_per_slice, args_arr)):
+                for _ in tqdm(p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr)):
                     progress_bar.update()
 
         # Plot loss histogram
@@ -141,6 +141,10 @@ def calculate_results_per_slice(loss, df_row, x, y, pred, figure_path):
                  (loss, df_row.export_idx, df_row.original_idx, df_row.plane, df_row.seriesuid))
     plt.savefig(figure_path, bbox_inches='tight')
     plt.close()
+
+
+def calculate_results_per_slice_multiprocessing(args):
+    return calculate_results_per_slice(*args)
 
 
 def draw_nodule_contour(ax, nodule_mask, color):
