@@ -52,10 +52,14 @@ def evaluate_generator(
         loss_arr.append(loss)
     loss_arr = np.array(loss_arr)
 
+    overall_results_str = "Overall model results:\nloss mean: %f; std: %f; max: %f; min: %f\n" % \
+          (loss_arr.mean(), loss_arr.std(), loss_arr.max(), loss_arr.min())
+
     # Save predictions to a folder with pictures, a csv and shit
     if export_results_folder is not None:
         num_rows = len(test_df)
         results_folder_path = Path(export_results_folder)
+        results_folder_path.mkdir(parents=True, exist_ok=True)
         rows_gen = (e[1] for e in test_df.iterrows())
         x_gen = (e[0] for e in test_loader)
         y_gen = (e[1] for e in test_loader)
@@ -78,11 +82,19 @@ def evaluate_generator(
                 df_row.seriesuid,
             ]
             export_arr.append(export_row)
-        pd.DataFrame(export_arr, columns=export_columns).to_csv((results_folder_path / 'results.csv').open('w'))
 
-    print("Overall model results:")
-    print("loss mean: %f; std: %f; max: %f; min: %f\n" %
-          (loss_arr.mean(), loss_arr.std(), loss_arr.max(), loss_arr.min()))
+        # Export slice results as csv
+        pd.DataFrame(export_arr, columns=export_columns).to_csv((results_folder_path / 'results_slices.csv').open('w'))
+
+        # Plot loss histogram
+        loss_hist, bins = np.histogram(np.array(loss_arr), bins=20, range=(0, 1), density=True)
+        plt.figure(figsize=(7, 5))
+        plt.hist(loss_hist, bins)
+        plt.title(overall_results_str)
+        plt.savefig(str(results_folder_path / 'results_overall.png'), bbox_inches='tight')
+        plt.close()
+
+    print(overall_results_str)
 
 
 def calculate_results_per_slice(loss, df_row, x, y, pred, figure_path):
