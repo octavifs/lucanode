@@ -2,11 +2,13 @@
 Utilities and classes used for dataset augmentation
 """
 from abc import ABC, abstractmethod
+import itertools
+import collections
+
 import numpy as np
 import pandas as pd
 from scipy.ndimage.interpolation import zoom
-import itertools
-import collections
+import cv2
 
 
 class Transformer(ABC):
@@ -162,10 +164,23 @@ class DisplacementTransform(Transformer):
         pass
 
 
+class LaplacianTransform(Transformer):
+    def apply(self, do_laplacian):
+        """Apply a Laplacian of gaussians on the object"""
+        if do_laplacian:
+            slice_with_laplacian = self.object[0, :, :] - cv2.Laplacian(self.object[0, :, :], cv2.CV_32F)
+            filtered_object = self.object.copy()
+            filtered_object[0, :, :] = slice_with_laplacian
+            return filtered_object
+        else:
+            return self.object.copy()
+
+
 TRANSFORMATIONS = {
     "flip": {"class": FlipXTransform, "values": [False, True]},
     "rotate": {"class": RotateTransform, "values": [0, 90, 180, 270]},
     "zoom": {"class": ZoomTransform, "values": [0.9, 1.0, 1.1]},
+    "laplacian": {"class": LaplacianTransform, "values": [True]},
 }
 
 
