@@ -27,7 +27,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if not args.results_folder:
-        args.results_folder = str(Path(".") / ("results_" + args.seriesuid))
+        args.results_folder = str(Path(".") / ("results_" + args.plane + "_" + args.seriesuid))
 
     print("""
 
