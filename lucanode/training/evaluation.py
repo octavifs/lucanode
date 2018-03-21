@@ -1,9 +1,8 @@
 from pathlib import Path
 from multiprocessing import Pool
 
-import matplotlib
 # Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
+import matplotlib; matplotlib.use('Agg')
 
 import numpy as np
 from tqdm import tqdm
@@ -24,15 +23,9 @@ def evaluate_generator(
         test_split_min,
         test_split_max,
         export_results_folder=None,
+        sort_by_loss=True,
 ):
     """Evaluate the network on a set of slices from the metadata data frame"""
-
-    print("""
-
-#############################################
-######### lucanode slice evaluation #########
-#############################################
-""")
     test_df, _ = split_dataset(metadata_df, test_split_min, test_split_max, test_split_max)
 
     if not len(test_df):
@@ -68,13 +61,21 @@ def evaluate_generator(
             overall_results_str,
             prediction_arr,
             test_df,
-            test_loader
+            test_loader,
+            sort_by_loss,
         )
 
     print(overall_results_str)
 
 
-def export_detailed_results(export_results_folder, loss_arr, overall_results_str, prediction_arr, test_df, test_loader):
+def export_detailed_results(export_results_folder,
+                            loss_arr,
+                            overall_results_str,
+                            prediction_arr,
+                            test_df,
+                            test_loader,
+                            sort_by_loss,
+                            ):
     num_rows = len(test_df)
     results_folder_path = Path(export_results_folder)
     results_folder_path.mkdir(parents=True, exist_ok=True)
@@ -83,7 +84,8 @@ def export_detailed_results(export_results_folder, loss_arr, overall_results_str
     y_gen = (e[1] for e in test_loader)
     print("Exporting results on all test slices...")
     args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr)]
-    args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
+    if sort_by_loss:
+        args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
     figure_paths = [str(results_folder_path / ("%06d" % (idx,))) + ".png" for idx in range(num_rows)]
     args_arr = [(*args, figure_path) for args, figure_path in zip(args_arr, figure_paths)]
     export_arr = []

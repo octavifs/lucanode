@@ -24,6 +24,13 @@ if __name__ == '__main__':
                         help="Folder to store detailed results")
     args = parser.parse_args()
 
+    print("""
+
+#############################################
+######### lucanode slice evaluation #########
+#############################################
+""")
+
     dataset_metadata_df = pd.read_csv(args.dataset_metadata)
     dataset_metadata_df = dataset_metadata_df[dataset_metadata_df["plane"] == args.plane]
     dataset_array = np.load(args.dataset_array, mmap_mode='r')
