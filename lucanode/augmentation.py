@@ -168,7 +168,8 @@ class LaplacianTransform(Transformer):
     def apply(self, do_laplacian):
         """Apply a Laplacian of gaussians on the object"""
         if do_laplacian:
-            slice_with_laplacian = self.object[0, :, :] - cv2.Laplacian(self.object[0, :, :], cv2.CV_32F)
+            slice_with_laplacian = self.object[0, :, :] - cv2.Laplacian(self.object[0, :, :].astype(np.float32),
+                                                                        cv2.CV_32F)
             filtered_object = self.object.copy()
             filtered_object[0, :, :] = slice_with_laplacian
             return filtered_object
