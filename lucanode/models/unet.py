@@ -68,7 +68,7 @@ def Unet(num_rows: int, num_cols: int) -> Model:
 
     model.compile(
         optimizer=Adam(lr=1e-3),
-        loss=dice_coef_loss_3ch,
+        loss='binary_crossentropy',
         metrics=[dice_coef_3ch],
         sample_weight_mode='temporal',
     )
