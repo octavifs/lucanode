@@ -14,7 +14,7 @@ def ConvBN2D(*args, **kwargs):
 
 
 def Unet(num_rows: int, num_cols: int) -> Model:
-    inputs = Input((num_rows, num_cols, 1))
+    inputs = Input((num_rows, num_cols, 3))
 
     conv1 = ConvBN2D(64, 3, padding='same', kernel_initializer='he_normal')(inputs)
     conv1 = ConvBN2D(64, 3, padding='same', kernel_initializer='he_normal')(conv1)
