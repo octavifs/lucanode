@@ -83,7 +83,7 @@ class LunaSequence(Sequence):
             # Stack pre, slice and post as RGB channels
             masked_ct_arr = np.stack(masked_ct_arr, axis=-1)
             nodule_mask_arr = np.stack(nodule_mask_arr, axis=-1)
-            yield masked_ct_arr[:,:,1][:,:,np.newaxis], nodule_mask_arr
+            yield masked_ct_arr[:,:,1][:,:,np.newaxis], nodule_mask_arr[:,:,1][:,:,np.newaxis]
 
     def __getitem__(self, idx):
         augmented_batches_gen = self._apply_augmentation(*self._get_batch(idx))
@@ -91,7 +91,6 @@ class LunaSequence(Sequence):
         batch_x = []
         batch_y = []
         for slice_ct, slice_nodule in self._split_scan_from_mask(augmented_batches_gen):
-            print(slice_ct.shape)
             batch_x.append(slice_ct)
             batch_y.append(slice_nodule)
 
