@@ -91,6 +91,7 @@ class LunaSequence(Sequence):
         batch_x = []
         batch_y = []
         for slice_ct, slice_nodule in self._split_scan_from_mask(augmented_batches_gen):
+            print(slice_ct.shape)
             batch_x.append(slice_ct)
             batch_y.append(slice_nodule)
 
