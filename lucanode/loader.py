@@ -82,7 +82,7 @@ class LunaSequence(Sequence):
                 nodule_mask_arr.append(nodule_mask)
             # Stack pre, slice and post as RGB channels
             masked_ct_arr = np.stack(masked_ct_arr, axis=-1)
-            nodule_mask_arr = np.stack(nodule_mask_arr, axis=-1)
+            nodule_mask_arr = nodule_mask_arr[1][:, :, np.newaxis]  # Just return mask for the mid slice (not pre/post)
             yield masked_ct_arr, nodule_mask_arr
 
     def __getitem__(self, idx):

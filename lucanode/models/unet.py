@@ -1,7 +1,7 @@
 from keras.models import *
 from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, UpSampling2D, Dropout, BatchNormalization, Activation
 from keras.optimizers import *
-from lucanode.metrics import dice_coef_3ch, dice_coef_loss_3ch
+from lucanode.metrics import dice_coef, dice_coef_loss
 
 
 def ConvBN2D(*args, **kwargs):
@@ -68,8 +68,8 @@ def Unet(num_rows: int, num_cols: int) -> Model:
 
     model.compile(
         optimizer=Adam(lr=1e-3),
-        loss=dice_coef_loss_3ch,
-        metrics=[dice_coef_3ch],
+        loss=dice_coef_loss,
+        metrics=[dice_coef],
         sample_weight_mode='temporal',
     )
 
