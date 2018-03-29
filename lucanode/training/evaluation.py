@@ -24,6 +24,7 @@ def evaluate_generator(
         test_split_max,
         export_results_folder=None,
         sort_by_loss=True,
+        only_predictions=False,
 ):
     """Evaluate the network on a set of slices from the metadata data frame"""
     test_df, _ = split_dataset(metadata_df, test_split_min, test_split_max, test_split_max)
@@ -36,24 +37,27 @@ def evaluate_generator(
     model.load_weights(model_weights, by_name=True)
     test_loader = loader.LunaSequence(test_df, slices_array, 1, False)
 
-    print("Predicting segmentation on all test slices...")
     prediction_arr = []
-    for x, _ in tqdm(test_loader):
+    pbar = tqdm(test_loader)
+    pbar.set_description("Predicting segmentation on all test slices")
+    for x, _ in pbar:
         y_pred = model.predict(x, batch_size=1, verbose=0)
         prediction_arr.append(y_pred)
     prediction_arr = np.array(prediction_arr)
 
-    print("Evaluating model on all test slices...")
     loss_arr = []
-    for x, y in tqdm(test_loader):
-        loss, _ = model.evaluate(x, y, verbose=0)
-        loss_arr.append(loss)
-    loss_arr = np.array(loss_arr)
+    if not only_predictions:
+        pbar = tqdm(test_loader)
+        pbar.set_description("Evaluating model on all test slices")
+        for x, y in pbar:
+            loss, _ = model.evaluate(x, y, verbose=0)
+            loss_arr.append(loss)
+        loss_arr = np.array(loss_arr)
 
-    overall_results_str = "Overall model results:\nloss mean: %f; std: %f; max: %f; min: %f\n" % \
-          (loss_arr.mean(), loss_arr.std(), loss_arr.max(), loss_arr.min())
+        overall_results_str = "Overall model results:\nloss mean: %f; std: %f; max: %f; min: %f\n" % \
+                              (loss_arr.mean(), loss_arr.std(), loss_arr.max(), loss_arr.min())
 
-    # Save predictions to a folder with pictures, a csv and the loss distribution on the test dataset
+        # Save predictions to a folder with pictures, a csv and the loss distribution on the test dataset
     if export_results_folder is not None:
         export_detailed_results(
             export_results_folder,
@@ -64,8 +68,10 @@ def evaluate_generator(
             test_loader,
             sort_by_loss,
         )
+    if not only_predictions:
+        print(overall_results_str)
 
-    print(overall_results_str)
+    return loss_arr, prediction_arr  # These are not sorted, even if the exports were
 
 
 def export_detailed_results(export_results_folder,
@@ -82,7 +88,6 @@ def export_detailed_results(export_results_folder,
     rows_gen = (e[1] for e in test_df.iterrows())
     x_gen = (e[0] for e in test_loader)
     y_gen = (e[1] for e in test_loader)
-    print("Exporting results on all test slices...")
     args_arr = [args for args in zip(loss_arr, rows_gen, x_gen, y_gen, prediction_arr)]
     if sort_by_loss:
         args_arr = sorted(args_arr, key=lambda a: a[0], reverse=True)  # Sort in descending order, by loss (worse first)
@@ -113,6 +118,7 @@ def export_detailed_results(export_results_folder,
     # Export slice results as plots via multiprocessing
     with Pool() as p:
         with tqdm(total=num_rows) as progress_bar:
+            progress_bar.set_description("Exporting results on all test slices")
             for _ in p.imap_unordered(calculate_results_per_slice_multiprocessing, args_arr):
                 progress_bar.update()
 
@@ -161,4 +167,3 @@ def draw_nodule_contour(ax, nodule_mask, color):
     contours = measure.find_contours(nodule_mask, 0.8)
     for n, contour in enumerate(contours):
         ax.plot(contour[:, 1], contour[:, 0], linewidth=1, color=color, alpha=0.8)
-

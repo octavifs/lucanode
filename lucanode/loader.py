@@ -121,7 +121,7 @@ def load_scan_in_training_format(
     img_nodule_mask_arr = sitk.GetArrayFromImage(img_nodule) > 0
 
     # Get spacing
-    x_spacing, y_spacing, z_spacing = img.GetSpacing()
+    spacing = img.GetSpacing()
 
     # Find ct scan bounding box
     label = measure.label(img_mask_arr)
@@ -138,6 +138,7 @@ def load_scan_in_training_format(
     export_idx_ct = 0
 
     with tqdm(total=total_export_slices) as progress_bar:
+        progress_bar.set_description("Retrieving individual slices from scan (all planes)")
         # Iterate over the axial slices
         for z_idx in range(z_len):
             axial_plane_ct = img_arr[z_idx, y_min:y_max, x_min:x_max]
@@ -149,8 +150,7 @@ def load_scan_in_training_format(
             new_origin = np.array([z_idx, y_min, x_min]) - np.array([0, offset[0], offset[1]])
             new_origin_sitk = tuple(int(i) for i in new_origin[::-1])  # sitk does not like np.arrays nor np.ints
             physical_origin = img.TransformIndexToPhysicalPoint(new_origin_sitk)[::-1]
-            plane_spacing = (None, y_spacing, x_spacing)
-            row = [export_idx_ct, z_idx, "axial", seriesuid, physical_origin, plane_spacing]
+            row = [export_idx_ct, z_idx, "axial", seriesuid, physical_origin, spacing]
             rows_arr.append(row)
             export_idx_ct += 1
             progress_bar.update()
@@ -166,8 +166,7 @@ def load_scan_in_training_format(
             new_origin = np.array([z_min, y_idx, x_min]) - np.array([offset[0], 0, offset[1]])
             new_origin_sitk = tuple(int(i) for i in new_origin[::-1])  # sitk does not like np.arrays nor np.ints
             physical_origin = img.TransformIndexToPhysicalPoint(new_origin_sitk)[::-1]
-            plane_spacing = (z_spacing, None, x_spacing)
-            row = [export_idx_ct, y_idx, "coronal", seriesuid, physical_origin, plane_spacing]
+            row = [export_idx_ct, y_idx, "coronal", seriesuid, physical_origin, spacing]
             rows_arr.append(row)
             export_idx_ct += 1
             progress_bar.update()
@@ -183,8 +182,7 @@ def load_scan_in_training_format(
             new_origin = np.array([z_min, y_min, x_idx]) - np.array([offset[0], offset[1], 0])
             new_origin_sitk = tuple(int(i) for i in new_origin[::-1])  # sitk does not like np.arrays nor np.ints
             physical_origin = img.TransformIndexToPhysicalPoint(new_origin_sitk)[::-1]
-            plane_spacing = (z_spacing, y_spacing, None)
-            row = [export_idx_ct, x_idx, "sagittal", seriesuid, physical_origin, plane_spacing]
+            row = [export_idx_ct, x_idx, "sagittal", seriesuid, physical_origin, spacing]
             rows_arr.append(row)
             export_idx_ct += 1
             progress_bar.update()
