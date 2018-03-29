@@ -1,5 +1,7 @@
 # Launch training
 import argparse
+import logging
+
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
@@ -43,6 +45,10 @@ if __name__ == '__main__':
         ct_scan_path = Path(args.dataset_path) / "equalized_spacing" / (seriesuid + ".nii.gz")
         lung_mask_path = Path(args.dataset_path) / "equalized_spacing_lung_masks" / (seriesuid + ".nii.gz")
         nodule_mask_path = Path(args.dataset_path) / "equalized_spacing_nodule_masks" / (seriesuid + ".nii.gz")
+
+        if not (ct_scan_path.exists() and lung_mask_path.exists() and nodule_mask_path.exists()):
+            logging.warning("Could not find scan for seriesuid " + seriesuid)
+            continue
 
         dataset_metadata_df, dataset_array = loader.load_scan_in_training_format(
             seriesuid,
