@@ -9,7 +9,7 @@ def retrieve_candidates(dataset_metadata_df, predictions, plane, threshold=0.5):
     """Extract nodule candidates from scan predictions"""
     metadata = dataset_metadata_df[(dataset_metadata_df.plane == plane) & (dataset_metadata_df.original_idx == 0)].iloc[0]
     nodule_mask = predictions[:, 0, :, :, 0] > threshold
-    labels = measure.label(nodule_mask, connectivity=2)
+    labels = measure.label(nodule_mask)
     regionprops = measure.regionprops(labels)
     rows = []
     for props in regionprops:
