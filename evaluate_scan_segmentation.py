@@ -71,5 +71,6 @@ if __name__ == '__main__':
     )
 
     if args.detailed_results:
+        np.save(str(results_folder_path / "results_predictions.npy"), predictions)
         candidates_df = nodule_candidates.retrieve_candidates(dataset_metadata_df, predictions, args.plane)
         candidates_df.to_csv((results_folder_path / "results_candidates.csv").open('w'))
