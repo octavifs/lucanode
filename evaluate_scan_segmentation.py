@@ -23,6 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('model_weights', type=str, help="path where the model weights are stored")
     parser.add_argument('--plane', dest='plane', default="axial")
     parser.add_argument('--detailed-results', dest='detailed_results', action='store_true')
+    parser.add_argument('--no-export-slices', dest='export_slices', action='store_false')
     parser.add_argument('--save-input-array', dest='save_input_array', action='store_true')
     parser.add_argument('--only-predictions', dest='only_predictions', action='store_true')
     parser.add_argument('--results-folder', dest='results_folder', type=str, default=None,
@@ -65,7 +66,7 @@ if __name__ == '__main__':
         args.model_weights,
         test_split_min=0.0,
         test_split_max=1.0,
-        export_results_folder=args.results_folder if args.detailed_results else None,
+        export_results_folder=args.results_folder if args.detailed_results and args.export_slices else None,
         sort_by_loss=False,
         only_predictions=args.only_predictions
     )
