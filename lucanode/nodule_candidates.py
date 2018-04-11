@@ -9,26 +9,51 @@ def retrieve_candidates(dataset_metadata_df, predictions, plane, threshold=0.5):
     """Extract nodule candidates from scan predictions"""
     metadata = dataset_metadata_df[(dataset_metadata_df.plane == plane) & (dataset_metadata_df.original_idx == 0)].iloc[0]
     nodule_mask = predictions[:, 0, :, :, 0] > threshold
-    labels = measure.label(nodule_mask, connectivity=2)
+    labels = measure.label(nodule_mask)
     regionprops = measure.regionprops(labels)
     rows = []
     for props in regionprops:
         origin = np.array(metadata.physical_origin, dtype=np.float32)
         centroid_offset = plane_centroid(props.centroid, plane) * np.array(metadata.spacing, dtype=np.float32)
         centroid = origin + centroid_offset
+        relative_centroid = weighted_relative_centroid(props, plane)
         squareness = squareness_ratio(props)
         row = {
             "seriesuid": metadata.seriesuid,
             "coordX": centroid[2],
             "coordY": centroid[1],
             "coordZ": centroid[0],
-            "probability": nodule_likelihood(props.equivalent_diameter, squareness),
-            "diameter": props.equivalent_diameter,
+            "diameter_mm": props.equivalent_diameter,
+            # "relative_coordX": relative_centroid[2],
+            # "relative_coordY": relative_centroid[1],
+            # "relative_coordZ": relative_centroid[0],
             "squareness": squareness,
+            "extent": props.extent,
+            "layers": num_layers(props),
+            "eccentricity_top": eccentricity_axis(props, nodule_mask, 0),
+            "eccentricity_side": eccentricity_axis(props, nodule_mask, 1),
         }
         rows.append(row)
-    columns = ["seriesuid", "coordX", "coordY", "coordZ", "probability", "diameter", "squareness"]
+    columns = ["seriesuid", "coordX", "coordY", "coordZ", "diameter_mm",
+               # "relative_coordX", "relative_coordY", "relative_coordZ",
+               "squareness", "extent", "layers", "eccentricity_top", "eccentricity_side"]
     return pd.DataFrame(rows, columns=columns)
+
+
+def num_layers(props):
+    return props.bbox[3] - props.bbox[0]
+
+
+def eccentricity_axis(props, mask, axis):
+    z_min, y_min, x_min, z_max, y_max, x_max = props.bbox
+    cut = mask[z_min:z_max, y_min:y_max, x_min:x_max]
+    projection_mask = cut.sum(axis=axis) > 0
+    labeled_mask = measure.label(projection_mask)
+    # expanding the mask by 1px 'cause regionprops can't calculate eccentricity if either of the sides is of length 1
+    expanded_labeled_mask = np.zeros(np.array(labeled_mask.shape)+2, dtype=labeled_mask.dtype)
+    expanded_labeled_mask[1:-1, 1:-1] = labeled_mask
+    p = measure.regionprops(expanded_labeled_mask)[0]
+    return p.eccentricity
 
 
 def squareness_ratio(props):
@@ -39,6 +64,13 @@ def squareness_ratio(props):
     orto_shape = sorted([shape[0], shape[1:].mean()])
     squareness_orto = orto_shape[0] / orto_shape[1]
     return abs(squareness_plane - squareness_orto)
+
+
+def weighted_relative_centroid(props, plane):
+    shape = np.array(props.bbox)
+    shape = shape[3:] - shape[:3]
+    relative_centroid = tuple(np.array(props.centroid) / shape)
+    return plane_centroid(relative_centroid, plane)
 
 
 def plane_centroid(point, plane):
@@ -53,8 +85,8 @@ def plane_centroid(point, plane):
         raise ValueError("Invalid plane " + str(plane))
 
 
-def nodule_likelihood(diameter, squareness):
-    """For now, return a very coarse pdf based on the features passed as parameter"""
-    diameter_likelihood = 1.0 if diameter >= 3 else 0.5
-    squareness_likelihood = 1.0 if squareness < 0.3 else 0.5
-    return diameter_likelihood * squareness_likelihood
+#def nodule_likelihood(diameter, squareness):
+#    """For now, return a very coarse pdf based on the features passed as parameter"""
+#    diameter_likelihood = 1.0 if diameter >= 3 else 0.5
+#    squareness_likelihood = 1.0 if squareness < 0.3 else 0.5
+#    return diameter_likelihood * squareness_likelihood
