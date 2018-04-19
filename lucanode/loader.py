@@ -11,12 +11,14 @@ from lucanode.training import DEFAULT_UNET_SIZE
 
 
 class LunaSequence(Sequence):
-    def __init__(self, df, data_array, batch_size, do_augmentation=True):
+    def __init__(self, df, data_array, batch_size, do_augmentation=True, do_nodule_segmentation=True):
         """
         Dataset loader to use when called via model.fit_generator
         :param df: Pandas dataframe containing data_array indexes
-        :param data_array: mmapped numpy arrat referencing to the slices
-        :param batch_size: integer (how many items will __getitem__ return
+        :param data_array: mmapped numpy array referencing to the slices
+        :param batch_size: integer. Indicates how many items will __getitem__ return
+        :param do_augmentation: bool. Indicates whether or not to apply data augmentation to the dataset
+        :param do_nodule_segmentation: bool. Prepare the sequence to do nodule (default) or lung segmentation
         """
         # Since we use RGB expansion to add pre and posterior slices, we make sure
         # nodule at the edges are not included, since edge+-1 wouldn't exist and then crash
@@ -28,6 +30,7 @@ class LunaSequence(Sequence):
         self.df = df
         self.data_array = data_array
         self.batch_size = batch_size
+        self.do_nodule_segmentation = do_nodule_segmentation
 
     def __len__(self):
         return ceil(len(self.df) / self.batch_size)
@@ -67,8 +70,7 @@ class LunaSequence(Sequence):
                 augmentation.apply_chained_transformations(post_slc, row_dict),
             )
 
-    @staticmethod
-    def _split_scan_from_mask(batches):
+    def _split_scan_from_mask(self, batches):
         for pre_slc, slc, post_slc in batches:
             masked_ct_arr = []
             nodule_mask_arr = []
@@ -76,10 +78,15 @@ class LunaSequence(Sequence):
                 ct = s[0, :, :]
                 lung_mask = s[1, :, :].astype(np.bool).astype(np.int32)
                 nodule_mask = s[2, :, :].astype(np.bool).astype(np.float32)
-                masked_ct = ct * lung_mask + (lung_mask-1)*4000
+                if self.do_nodule_segmentation:
+                    masked_ct = ct * lung_mask + (lung_mask-1)*4000
+                    mask = nodule_mask
+                else:
+                    masked_ct = ct
+                    mask = lung_mask
                 # Add them as a channel
                 masked_ct_arr.append(masked_ct)
-                nodule_mask_arr.append(nodule_mask)
+                nodule_mask_arr.append(mask)
             # Stack pre, slice and post as RGB channels
             masked_ct_arr = np.stack(masked_ct_arr, axis=-1)
             nodule_mask_arr = nodule_mask_arr[1][:, :, np.newaxis]  # Just return mask for the mid slice (not pre/post)
