@@ -13,12 +13,12 @@ def train_generator(
         num_epochs=5,
         last_epoch=0,
         initial_weights=None,
-        use_small_network=False,
+        do_nodule_segmentation=True
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
     training_df, validation_df = split_dataset(metadata_df)
-    training_loader = loader.LunaSequence(training_df, slices_array, batch_size, True)
-    validation_loader = loader.LunaSequence(validation_df, slices_array, batch_size, False)
+    training_loader = loader.LunaSequence(training_df, slices_array, batch_size, True, do_nodule_segmentation)
+    validation_loader = loader.LunaSequence(validation_df, slices_array, batch_size, False, do_nodule_segmentation)
 
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
@@ -27,10 +27,7 @@ def train_generator(
         save_best_only=True
     )
 
-    if use_small_network:
-        model = Unet(*DEFAULT_UNET_SIZE)
-    else:
-        model = Unet(512, 512)
+    model = Unet(*DEFAULT_UNET_SIZE)
 
     if initial_weights:
         model.load_weights(initial_weights)

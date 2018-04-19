@@ -25,7 +25,8 @@ if __name__ == '__main__':
                         help="Last finished epoch (picks up training from there). Useful if passing --initial-weights")
     parser.add_argument('--initial-weights', dest='initial_weights', type=str, default=None, action='store',
                         help="Initial weights to load into the network (.h5 file path)")
-    parser.add_argument('--use-small-network', dest='use_small_network', action='store_true', default=False)
+    parser.add_argument('--lung-segmentation', dest='do_nodule_segmentation', action='store_false',
+                        help="Train network to segment lungs instead of nodules")
     parser.add_argument('--plane', dest='plane', default="axial")
     args = parser.parse_args()
 
@@ -41,5 +42,5 @@ if __name__ == '__main__':
         num_epochs=args.num_epochs,
         last_epoch=args.last_epoch,
         initial_weights=args.initial_weights,
-        use_small_network=args.use_small_network,
+        do_nodule_segmentation=args.do_nodule_segmentation
     )
