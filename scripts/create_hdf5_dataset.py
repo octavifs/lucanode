@@ -34,6 +34,7 @@ def which_filename(file_path):
 
 
 def slices_with_mask(img_arr):
+    # Remember, GetArrayFromImage returns a 3D np.array as [Z, Y, X]
     return (img_arr != 0).sum(axis=-1).sum(axis=-1) != 0
 
 
