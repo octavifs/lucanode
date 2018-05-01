@@ -13,8 +13,8 @@ def ConvBN2D(*args, **kwargs):
     return layer_closure
 
 
-def Unet(num_rows: int, num_cols: int) -> Model:
-    inputs = Input((num_rows, num_cols, 3))
+def Unet(num_rows: int, num_cols: int, num_channels: int=3) -> Model:
+    inputs = Input((num_rows, num_cols, num_channels))
 
     conv1 = ConvBN2D(64, 3, padding='same', kernel_initializer='he_normal')(inputs)
     conv1 = ConvBN2D(64, 3, padding='same', kernel_initializer='he_normal')(conv1)

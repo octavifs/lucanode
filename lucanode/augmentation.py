@@ -248,3 +248,25 @@ def augment_dataframe(df, transformations=TRANSFORMATIONS):
     generator = (_merge_dicts(*e)
                  for e in itertools.product(df.to_dict('records'), _augment_transformations(transformations)))
     return pd.DataFrame(generator)
+
+
+def crop_to_shape(arr, shape):
+    """Crops a numpy array into the specified shape. If the array was larger, return centered crop. If it was smaller,
+    return a larger array with the original data in the center"""
+    if arr.ndim != len(shape):
+        raise Exception("Array and crop shape dimensions do not match")
+
+    arr_shape = np.array(arr.shape)
+    shape = np.array(shape)
+    max_shape = np.stack([arr_shape, shape]).max(axis=0)
+    output_arr = np.zeros(max_shape, dtype=arr.dtype)
+
+    arr_min = ((max_shape - arr_shape) / 2).astype(np.int)
+    arr_max = arr_min + arr_shape
+    slicer_obj = tuple(slice(idx_min, idx_max, 1) for idx_min, idx_max in zip(arr_min, arr_max))
+    output_arr[slicer_obj] = arr
+
+    crop_min = ((max_shape - shape) / 2).astype(np.int)
+    crop_max = crop_min + shape
+    slicer_obj = tuple(slice(idx_min, idx_max, 1) for idx_min, idx_max in zip(crop_min, crop_max))
+    return output_arr[slicer_obj].copy()  # Return a copy of the view, so the rest of memory can be GC

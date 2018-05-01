@@ -206,3 +206,77 @@ def build_slice(ct, lung_mask, nodule_mask, height, width):
     slc[1, offset[0]:offset[0] + ct.shape[0], offset[1]:offset[1] + ct.shape[1]] = lung_mask
     slc[2, offset[0]:offset[0] + ct.shape[0], offset[1]:offset[1] + ct.shape[1]] = nodule_mask
     return slc, offset
+
+
+class LungSegmentationSequence(Sequence):
+    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, do_augmentation=True,
+                 epoch_len=None, epoch_frac=0.1):
+        self.dataset = dataset
+        self.batch_size = batch_size
+
+        self.df = self._fetch_dataset_metadata(subsets)
+        if do_augmentation:
+            self.df = self._augment_dataframe(self.df)
+        self.epoch_len = epoch_len
+        self.epoch_frac = epoch_frac
+        self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
+
+    def __len__(self):
+        return ceil(len(self.epoch_df) / self.batch_size)
+
+    def on_epoch_end(self):
+        self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
+
+    def _fetch_dataset_metadata(self, subsets):
+        ct_scans = set(self.dataset["ct_scans"].keys())
+        lung_masks = set(self.dataset["lung_masks"].keys())
+        available_ids = {sid for sid in (ct_scans & lung_masks)
+                         if self.dataset["ct_scans"][sid].attrs["subset"] in subsets}
+        metadata = []
+        for sid in available_ids:
+            num_slices = self.dataset["ct_scans"][sid].shape[0]
+            for idx in range(num_slices):
+                e = {
+                    "seriesuid": sid,
+                    "slice_idx": idx,
+                }
+                metadata.append(e)
+        return pd.DataFrame(metadata)
+
+    def _augment_dataframe(self, dataframe):
+        return dataframe
+
+    def _apply_preprocessing(self, slices):
+        for scan, mask in slices:
+            yield (
+                augmentation.crop_to_shape(scan, DEFAULT_UNET_SIZE),
+                augmentation.crop_to_shape(mask, DEFAULT_UNET_SIZE)
+            )
+
+    def _apply_augmentation(self, slices):
+        pass
+
+    def _get_batch_metadata(self, idx):
+        idx_df_min = idx * self.batch_size
+        idx_df_max = (idx + 1) * self.batch_size
+        for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
+            yield r
+
+    def _get_slices(self, metadata):
+        for row in metadata:
+            scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
+            mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
+            yield scan, mask
+
+    def __getitem__(self, idx):
+        metadata_gen = self._get_batch_metadata(idx)
+        raw_slices_gen = self._get_slices(metadata_gen)
+        slices_gen = self._apply_preprocessing(raw_slices_gen)
+        batch_x = []
+        batch_y = []
+        for scan, mask in slices_gen:
+            batch_x.append(scan[:, :, np.newaxis])
+            batch_y.append(mask[:, :, np.newaxis].astype(np.int))
+        batch_x = np.array(batch_x)
+        batch_y = np.array(batch_y)
+        return batch_x, batch_y

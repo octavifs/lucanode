@@ -1,4 +1,6 @@
 from keras.callbacks import ModelCheckpoint
+import h5py
+import pickle
 
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
@@ -42,3 +44,44 @@ def train_generator(
         callbacks=[model_checkpoint]
     )
     return model
+
+
+def train_lung_segmentation(
+        dataset_file,
+        output_weights_file,
+        batch_size=5,
+        num_epochs=10,
+        last_epoch=0,
+        initial_weights=None,
+):
+    """Train the network from scratch or from a preexisting set of weights on the dataset"""
+
+    with h5py.File(dataset_file, "r") as dataset:
+        training_loader = loader.LungSegmentationSequence(dataset, batch_size, do_augmentation=False)
+        validation_loader = loader.LungSegmentationSequence(dataset, batch_size, subsets={8}, do_augmentation=False)
+
+        model_checkpoint = ModelCheckpoint(
+            output_weights_file,
+            monitor='loss',
+            verbose=1,
+            save_best_only=True
+        )
+        network_size = list(DEFAULT_UNET_SIZE)
+        network_size.append(1)  # Just have 1 channel
+        model = Unet(*network_size)
+
+        if initial_weights:
+            model.load_weights(initial_weights)
+        history = model.fit_generator(
+            generator=training_loader,
+            epochs=num_epochs,
+            initial_epoch=last_epoch,
+            verbose=1,
+            validation_data=validation_loader,
+            use_multiprocessing=False,
+            shuffle=True,
+            callbacks=[model_checkpoint]
+        )
+
+        with open(output_weights_file + ".history", "wb") as fd:
+            pickle.dump(history.history, fd)
