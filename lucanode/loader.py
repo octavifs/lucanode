@@ -210,7 +210,7 @@ def build_slice(ct, lung_mask, nodule_mask, height, width):
 
 class LungSegmentationSequence(Sequence):
     def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, do_augmentation=True,
-                 epoch_len=None, epoch_frac=0.1):
+                 epoch_len=None, epoch_frac=0.1, epoch_shuffle=True):
         self.dataset = dataset
         self.batch_size = batch_size
 
@@ -219,13 +219,15 @@ class LungSegmentationSequence(Sequence):
             self.df = self._augment_dataframe(self.df)
         self.epoch_len = epoch_len
         self.epoch_frac = epoch_frac
+        self.epoch_shuffle = epoch_shuffle
         self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
 
     def __len__(self):
         return ceil(len(self.epoch_df) / self.batch_size)
 
     def on_epoch_end(self):
-        self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
+        if self.epoch_shuffle:
+            self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
 
     def _fetch_dataset_metadata(self, subsets):
         ct_scans = set(self.dataset["ct_scans"].keys())

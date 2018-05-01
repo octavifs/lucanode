@@ -5,6 +5,7 @@ import pickle
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet
+from lucanode.callbacks import HistoryLog
 
 
 def train_generator(
@@ -57,22 +58,41 @@ def train_lung_segmentation(
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
     with h5py.File(dataset_file, "r") as dataset:
-        training_loader = loader.LungSegmentationSequence(dataset, batch_size, do_augmentation=False)
-        validation_loader = loader.LungSegmentationSequence(dataset, batch_size, subsets={8}, do_augmentation=False)
+        # Loaders
+        training_loader = loader.LungSegmentationSequence(
+            dataset,
+            batch_size,
+            do_augmentation=False,
+            epoch_frac=0.1
+        )
+        validation_loader = loader.LungSegmentationSequence(
+            dataset,
+            batch_size,
+            subsets={8},
+            do_augmentation=False,
+            epoch_frac=0.3,
+            epoch_shuffle=False
+        )
 
+        # Callbacks
         model_checkpoint = ModelCheckpoint(
             output_weights_file,
             monitor='loss',
             verbose=1,
             save_best_only=True
         )
+        history_log = HistoryLog(output_weights_file + ".history")
+
+        # Setup network
         network_size = list(DEFAULT_UNET_SIZE)
         network_size.append(1)  # Just have 1 channel
         model = Unet(*network_size)
 
         if initial_weights:
             model.load_weights(initial_weights)
-        history = model.fit_generator(
+
+        # Train
+        model.fit_generator(
             generator=training_loader,
             epochs=num_epochs,
             initial_epoch=last_epoch,
@@ -80,8 +100,5 @@ def train_lung_segmentation(
             validation_data=validation_loader,
             use_multiprocessing=False,
             shuffle=True,
-            callbacks=[model_checkpoint]
+            callbacks=[model_checkpoint, history_log]
         )
-
-        with open(output_weights_file + ".history", "wb") as fd:
-            pickle.dump(history.history, fd)
