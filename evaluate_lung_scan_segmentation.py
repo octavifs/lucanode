@@ -33,7 +33,7 @@ if __name__ == '__main__':
     with h5py.File(args.dataset, "r") as dataset:
         df = loader.dataset_metadata_as_dataframe(dataset)
         df = df[df.subset == args.subset]
-        scan_ids = list(set(df.seriesuid))[-2:]
+        scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids):
             df_view = df[df.seriesuid == seriesuid]
