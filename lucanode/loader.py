@@ -208,13 +208,43 @@ def build_slice(ct, lung_mask, nodule_mask, height, width):
     return slc, offset
 
 
+def dataset_metadata_as_dataframe(dataset):
+    ct_scans = set(dataset["ct_scans"].keys())
+    lung_masks = set(dataset["lung_masks"].keys())
+    available_ids = {sid for sid in (ct_scans & lung_masks)}
+    metadata = []
+    for sid in available_ids:
+        num_slices = dataset["ct_scans"][sid].shape[0]
+        attrs = {
+            "origin": dataset["ct_scans"][sid].attrs["origin"],
+            "spacing": dataset["ct_scans"][sid].attrs["spacing"],
+            "subset": dataset["ct_scans"][sid].attrs["subset"],
+            "has_mask": dataset["ct_scans"][sid].attrs["slices_with_mask"],
+        }
+        for idx in range(num_slices):
+            e = {
+                "seriesuid": sid,
+                "slice_idx": idx,
+                "origin": attrs["origin"],
+                "spacing": attrs["spacing"],
+                "subset": attrs["subset"],
+                "has_mask": attrs["has_mask"][idx],
+            }
+            metadata.append(e)
+    return pd.DataFrame(metadata)
+
+
 class LungSegmentationSequence(Sequence):
-    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, do_augmentation=True,
+    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, dataframe=None, do_augmentation=True,
                  epoch_len=None, epoch_frac=0.1, epoch_shuffle=True):
         self.dataset = dataset
         self.batch_size = batch_size
 
-        self.df = self._fetch_dataset_metadata(subsets)
+        if dataframe is not None:
+            self.df = dataframe
+        else:
+            df = dataset_metadata_as_dataframe(self.dataset)
+            self.df = df[df.subset.isin(subsets)]
         if do_augmentation:
             self.df = self._augment_dataframe(self.df)
         self.epoch_len = epoch_len
@@ -228,22 +258,6 @@ class LungSegmentationSequence(Sequence):
     def on_epoch_end(self):
         if self.epoch_shuffle:
             self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
-
-    def _fetch_dataset_metadata(self, subsets):
-        ct_scans = set(self.dataset["ct_scans"].keys())
-        lung_masks = set(self.dataset["lung_masks"].keys())
-        available_ids = {sid for sid in (ct_scans & lung_masks)
-                         if self.dataset["ct_scans"][sid].attrs["subset"] in subsets}
-        metadata = []
-        for sid in available_ids:
-            num_slices = self.dataset["ct_scans"][sid].shape[0]
-            for idx in range(num_slices):
-                e = {
-                    "seriesuid": sid,
-                    "slice_idx": idx,
-                }
-                metadata.append(e)
-        return pd.DataFrame(metadata)
 
     def _augment_dataframe(self, dataframe):
         return dataframe
