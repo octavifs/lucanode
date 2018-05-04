@@ -13,7 +13,7 @@ def ConvBN2D(*args, **kwargs):
     return layer_closure
 
 
-def Unet(num_rows: int, num_cols: int, num_channels: int=3) -> Model:
+def Unet(num_rows: int, num_cols: int, num_channels: int=3, loss_fn=dice_coef_loss) -> Model:
     inputs = Input((num_rows, num_cols, num_channels))
 
     conv1 = ConvBN2D(64, 3, padding='same', kernel_initializer='he_normal')(inputs)
@@ -68,7 +68,7 @@ def Unet(num_rows: int, num_cols: int, num_channels: int=3) -> Model:
 
     model.compile(
         optimizer=Adam(lr=1e-3),
-        loss=dice_coef_loss,
+        loss=loss_fn,
         metrics=[dice_coef],
         sample_weight_mode='temporal',
     )
@@ -76,7 +76,7 @@ def Unet(num_rows: int, num_cols: int, num_channels: int=3) -> Model:
     return model
 
 
-def UnetSansBN(num_rows: int, num_cols: int, num_channels: int=3, loss_fn=dice_coef) -> Model:
+def UnetSansBN(num_rows: int, num_cols: int, num_channels: int=3, loss_fn=dice_coef_loss) -> Model:
     inputs = Input((num_rows, num_cols, num_channels))
 
     conv1 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal')(inputs)

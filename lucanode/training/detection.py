@@ -1,6 +1,5 @@
 from keras.callbacks import ModelCheckpoint
 import h5py
-import pickle
 
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
@@ -147,6 +146,66 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
         # Setup network
         network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
         model = UnetSansBN(*network_size)
+
+        if initial_weights:
+            model.load_weights(initial_weights)
+
+        # Train
+        model.fit_generator(
+            generator=training_loader,
+            epochs=num_epochs,
+            initial_epoch=last_epoch,
+            verbose=1,
+            validation_data=validation_loader,
+            use_multiprocessing=False,
+            shuffle=True,
+            callbacks=[model_checkpoint, history_log]
+        )
+
+def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
+        dataset_file,
+        output_weights_file,
+        batch_size=5,
+        num_epochs=10,
+        last_epoch=0,
+        initial_weights=None,
+):
+    """Train the network from scratch or from a preexisting set of weights on the dataset"""
+
+    with h5py.File(dataset_file, "r") as dataset:
+        # Loaders
+        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+        training_loader = loader.LungSegmentationSequence(
+            dataset,
+            batch_size,
+            dataframe=df_training,
+            do_augmentation=False,
+            epoch_frac=1.0,
+            epoch_shuffle=False
+        )
+        df_validation = df[df.subset.isin([8]) & df.has_mask]
+        validation_loader = loader.LungSegmentationSequence(
+            dataset,
+            batch_size,
+            dataframe=df_validation,
+            do_augmentation=False,
+            epoch_frac=1.0,
+            epoch_shuffle=False
+        )
+
+        # Callbacks
+        model_checkpoint = ModelCheckpoint(
+            output_weights_file,
+            monitor='loss',
+            verbose=1,
+            save_best_only=True
+        )
+        history_log = HistoryLog(output_weights_file + ".history")
+
+        # Setup network
+        network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
+        model = Unet(*network_size)
 
         if initial_weights:
             model.load_weights(initial_weights)

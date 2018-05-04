@@ -5,6 +5,8 @@ from lucanode.training import detection
 NETWORK_VARIATIONS = {
     "no_augmentation_no_normalization_binary_crossentropy":
         detection.train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentropy,
+    "no_augmentation_normalization_binary_crossentropy":
+        detection.train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy,
 }
 
 if __name__ == '__main__':
