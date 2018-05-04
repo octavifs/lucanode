@@ -7,6 +7,8 @@ NETWORK_VARIATIONS = {
         detection.train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentropy,
     "no_augmentation_normalization_binary_crossentropy":
         detection.train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy,
+    "no_augmentation_normalization_dice":
+        detection.train_nodule_segmentation_no_augmentation_normalization_dice
 }
 
 if __name__ == '__main__':
