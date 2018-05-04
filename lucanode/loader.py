@@ -208,18 +208,17 @@ def build_slice(ct, lung_mask, nodule_mask, height, width):
     return slc, offset
 
 
-def dataset_metadata_as_dataframe(dataset):
-    ct_scans = set(dataset["ct_scans"].keys())
-    lung_masks = set(dataset["lung_masks"].keys())
-    available_ids = {sid for sid in (ct_scans & lung_masks)}
+def dataset_metadata_as_dataframe(dataset, key="lung_masks"):
+    scans = set(dataset[key].keys())
+    available_ids = {sid for sid in scans}
     metadata = []
     for sid in available_ids:
-        num_slices = dataset["ct_scans"][sid].shape[0]
+        num_slices = dataset[key][sid].shape[0]
         attrs = {
-            "origin": dataset["ct_scans"][sid].attrs["origin"],
-            "spacing": dataset["ct_scans"][sid].attrs["spacing"],
-            "subset": dataset["ct_scans"][sid].attrs["subset"],
-            "has_mask": dataset["ct_scans"][sid].attrs["slices_with_mask"],
+            "origin": dataset[key][sid].attrs["origin"],
+            "spacing": dataset[key][sid].attrs["spacing"],
+            "subset": dataset[key][sid].attrs["subset"],
+            "has_mask": dataset[key][sid].attrs["slices_with_mask"]
         }
         for idx in range(num_slices):
             e = {
