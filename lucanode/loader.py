@@ -303,4 +303,5 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
             scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
             lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
             nodule_mask = self.dataset["nodule_masks_spherical"][row.seriesuid][row.slice_idx, :, :] > 0
-            yield scan * lung_mask, nodule_mask
+            masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
+            yield masked_scan, nodule_mask
