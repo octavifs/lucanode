@@ -295,3 +295,12 @@ class LungSegmentationSequence(Sequence):
         batch_x = np.array(batch_x)
         batch_y = np.array(batch_y)
         return batch_x, batch_y
+
+
+class NoduleSegmentationSequence(LungSegmentationSequence):
+    def _get_slices(self, metadata):
+        for row in metadata:
+            scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
+            lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
+            nodule_mask = self.dataset["nodule_masks_spherical"][row.seriesuid][row.slice_idx, :, :] > 0
+            yield scan * lung_mask, nodule_mask

@@ -117,7 +117,7 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
         # Loaders
         df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
         df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.LungSegmentationSequence(
+        training_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_training,
@@ -126,7 +126,7 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
             epoch_shuffle=False
         )
         df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.LungSegmentationSequence(
+        validation_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_validation,
@@ -178,7 +178,7 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
         # Loaders
         df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
         df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.LungSegmentationSequence(
+        training_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_training,
@@ -187,7 +187,7 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
             epoch_shuffle=False
         )
         df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.LungSegmentationSequence(
+        validation_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_validation,
@@ -239,7 +239,7 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
         # Loaders
         df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
         df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.LungSegmentationSequence(
+        training_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_training,
@@ -248,7 +248,7 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
             epoch_shuffle=False
         )
         df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.LungSegmentationSequence(
+        validation_loader = loader.NoduleSegmentationSequence(
             dataset,
             batch_size,
             dataframe=df_validation,
