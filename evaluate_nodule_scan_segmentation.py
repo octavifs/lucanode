@@ -44,8 +44,7 @@ def evaluate_candidates(pred_df, ann_df_view):
     return sensitivity, TP, FP, P
 
 
-if __name__ == '__main__':
-
+def main():
     parser = argparse.ArgumentParser(description='Evaluate CT nodule scan segmentation for a subset')
     parser.add_argument('dataset', type=str, help="Path to the hdf5 with the equalized spaced data")
     parser.add_argument('csv_annotations', type=str, help="CSV with real annotations")
@@ -131,3 +130,7 @@ if __name__ == '__main__':
         print(metrics_df.mean())
         print("\nMetrics variance for the subset:")
         print(metrics_df.var())
+
+
+if __name__ == '__main__':
+    main()
