@@ -15,7 +15,7 @@ from lucanode import nodule_candidates
 def predict(seriesuid, model, dataset_gen, dataset):
     mask_batches = []
     dice_batches = []
-    for (X, y), _ in tqdm(zip(dataset_gen, range(len(dataset_gen))), total=len(dataset_gen), desc="eval batches"):
+    for (X, y), _ in tqdm(zip(dataset_gen, range(len(dataset_gen))), total=len(dataset_gen), desc="eval batch"):
         y_pred = model.predict_on_batch(X)
         if X.shape[0] == 1:
             y_pred = np.array(y_pred)
