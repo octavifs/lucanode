@@ -302,6 +302,9 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
         for row in metadata:
             scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
             lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
-            nodule_mask = self.dataset["nodule_masks_spherical"][row.seriesuid][row.slice_idx, :, :] > 0
+            if row.seriesuid in self.dataset["nodule_masks_spherical"]:
+                nodule_mask = self.dataset["nodule_masks_spherical"][row.seriesuid][row.slice_idx, :, :] > 0
+            else:
+                nodule_mask = np.zeros(scan.shape, scan.dtype)
             masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
             yield masked_scan, nodule_mask

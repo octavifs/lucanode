@@ -43,6 +43,11 @@ def dice_coef(y_true, y_pred, smooth=1):
     return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
 
 
+def eval_dice_coef(y_true, y_pred, smooth=1):
+    """Just use this to avoid evaluating after a prediction"""
+    return K.eval(dice_coef(y_true, y_pred, smooth))
+
+
 def dice_coef_loss(y_true, y_pred):
     return 1 - dice_coef(y_true, y_pred)
 

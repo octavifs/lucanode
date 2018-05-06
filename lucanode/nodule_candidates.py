@@ -5,6 +5,40 @@ import pandas as pd
 from skimage import measure
 
 
+def retrieve_candidates_dataset(seriesuid, dataset, predictions, threshold=0.5):
+    """Extract nodule candidates from scan predictions"""
+    nodule_mask = predictions > threshold
+    labels = measure.label(nodule_mask)
+    regionprops = measure.regionprops(labels)
+    rows = []
+    for props in regionprops:
+        origin = np.array(dataset.attrs["origin"], dtype=np.float32)[::-1]
+        centroid_offset = plane_centroid(props.centroid, "axial") * np.array(dataset.attrs["spacing"], dtype=np.float32)[::-1]
+        centroid = origin + centroid_offset
+        relative_centroid = weighted_relative_centroid(props, "axial")
+        squareness = squareness_ratio(props)
+        row = {
+            "seriesuid": seriesuid,
+            "coordX": centroid[2],
+            "coordY": centroid[1],
+            "coordZ": centroid[0],
+            "diameter_mm": props.equivalent_diameter,
+            # "relative_coordX": relative_centroid[2],
+            # "relative_coordY": relative_centroid[1],
+            # "relative_coordZ": relative_centroid[0],
+            "squareness": squareness,
+            "extent": props.extent,
+            "layers": num_layers(props),
+            "eccentricity_top": eccentricity_axis(props, nodule_mask, 0),
+            "eccentricity_side": eccentricity_axis(props, nodule_mask, 1),
+        }
+        rows.append(row)
+    columns = ["seriesuid", "coordX", "coordY", "coordZ", "diameter_mm",
+               # "relative_coordX", "relative_coordY", "relative_coordZ",
+               "squareness", "extent", "layers", "eccentricity_top", "eccentricity_side"]
+    return pd.DataFrame(rows, columns=columns)
+
+
 def retrieve_candidates(dataset_metadata_df, predictions, plane, threshold=0.5):
     """Extract nodule candidates from scan predictions"""
     metadata = dataset_metadata_df[(dataset_metadata_df.plane == plane) & (dataset_metadata_df.original_idx == 0)].iloc[0]
