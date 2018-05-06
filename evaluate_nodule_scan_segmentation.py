@@ -84,8 +84,7 @@ def main():
         df = df[df.subset == args.subset]
         scan_ids = set(df.seriesuid)
         metrics = []
-    for seriesuid in tqdm(scan_ids, desc="eval scans"):
-        with h5py.File(args.dataset, "r") as dataset:
+        for seriesuid in tqdm(scan_ids, desc="eval scans"):
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
@@ -104,7 +103,7 @@ def main():
             pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
                                                                     dict(dataset["ct_scans"][seriesuid].attrs),
                                                                     scan_mask)
-            candidates.append(pred_df)
+            #candidates.append(pred_df)
 
             # Evaluate candidates
             pred_df = pred_df.reset_index()
@@ -127,8 +126,8 @@ def main():
     metrics_df = pd.DataFrame(metrics, columns=columns)
     metrics_df.to_csv(args.csv_output)
 
-    if args.csv_candidates:
-        pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
+    #if args.csv_candidates:
+    #    pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
 
     print("Metrics mean for the subset:")
     print(metrics_df.mean())
