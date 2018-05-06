@@ -8,11 +8,8 @@ from lucanode import loader
 from lucanode import augmentation
 from lucanode.training import DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet, UnetSansBN
-from lucanode.metrics import eval_dice_coef
+from lucanode.metrics import np_dice_coef
 from lucanode import nodule_candidates
-
-import gc
-import objgraph
 
 
 def predict(seriesuid, model, dataset_gen, dataset):
@@ -22,9 +19,8 @@ def predict(seriesuid, model, dataset_gen, dataset):
         y_pred = model.predict_on_batch(X)
         if X.shape[0] == 1:
             y_pred = np.array(y_pred)
-        #dice = eval_dice_coef(y.astype(np.float), y_pred.astype(np.float))  # prediction returns floats
-        #dice_batches.append(dice)
-        dice_batches.append(0.5)
+        dice = np_dice_coef(y, y_pred)
+        dice_batches.append(dice)
         mask_batches.append(y_pred)
     scan_dice = np.array(dice_batches)
     scan_mask = np.squeeze(np.concatenate(mask_batches))
@@ -89,8 +85,6 @@ def main():
         scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids, desc="eval scans"):
-            gc.collect()
-            objgraph.show_most_common_types()
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
