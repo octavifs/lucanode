@@ -46,8 +46,8 @@ def dice_coef(y_true, y_pred, smooth=1):
 
 def np_dice_coef(y_true, y_pred, smooth=1):
     """Just use this to avoid evaluating after a prediction"""
-    y_true_f = y_true.ravel()
-    y_pred_f = y_pred.ravel()
+    y_true_f = y_true.astype(np.float).ravel()
+    y_pred_f = y_pred.astype(np.float).ravel()
     intersection = np.sum(y_true_f * y_pred_f)
     return (2. * intersection + smooth) / (np.sum(y_true_f) + np.sum(y_pred_f) + smooth)
 
