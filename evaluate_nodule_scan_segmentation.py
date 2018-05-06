@@ -11,8 +11,6 @@ from lucanode.models.unet import Unet, UnetSansBN
 from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
 
-import gc
-
 
 def predict(seriesuid, model, dataset_gen, dataset):
     mask_batches = []
@@ -72,12 +70,6 @@ def main():
     else:
         network_shape = [*DEFAULT_UNET_SIZE, 1]
 
-    if args.batch_normalization:
-        model = Unet(*network_shape)
-    else:
-        model = UnetSansBN(*network_shape)
-    model.load_weights(args.model_weights, by_name=True)
-
     ann_df = pd.read_csv(args.csv_annotations)
     candidates = []
 
@@ -87,7 +79,13 @@ def main():
         scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids, desc="eval scans"):
-            gc.collect()
+            # Prepare model
+            if args.batch_normalization:
+                model = Unet(*network_shape)
+            else:
+                model = UnetSansBN(*network_shape)
+            model.load_weights(args.model_weights, by_name=True)
+
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
