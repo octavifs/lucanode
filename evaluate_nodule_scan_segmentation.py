@@ -10,7 +10,6 @@ from lucanode.training import DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet, UnetSansBN
 from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
-import gc
 
 
 def predict(seriesuid, model, dataset_gen, dataset):
@@ -80,12 +79,13 @@ def main():
     ann_df = pd.read_csv(args.csv_annotations)
     candidates = []
 
-    with h5py.File(args.dataset, "r") as dataset:
-        df = loader.dataset_metadata_as_dataframe(dataset, key='ct_scans')
+    with h5py.File(args.dataset, "r") as dataset_orig:
+        df = loader.dataset_metadata_as_dataframe(dataset_orig, key='ct_scans')
         df = df[df.subset == args.subset]
         scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids, desc="eval scans"):
+            dataset = dataset_orig.copy()
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
@@ -121,7 +121,6 @@ def main():
                 "P": P
             }
             metrics.append(scan_metrics)
-            gc.collect()
 
         columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
         metrics_df = pd.DataFrame(metrics, columns=columns)
