@@ -11,6 +11,9 @@ from lucanode.models.unet import Unet, UnetSansBN
 from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
 
+import gc
+import objgraph
+
 
 def predict(seriesuid, model, dataset_gen, dataset):
     mask_batches = []
@@ -85,6 +88,8 @@ def main():
         scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids, desc="eval scans"):
+            gc.collect()
+            objgraph.show_most_common_types()
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
