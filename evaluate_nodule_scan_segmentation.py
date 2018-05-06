@@ -79,13 +79,13 @@ def main():
     ann_df = pd.read_csv(args.csv_annotations)
     candidates = []
 
-    with h5py.File(args.dataset, "r") as dataset_orig:
-        df = loader.dataset_metadata_as_dataframe(dataset_orig, key='ct_scans')
+    with h5py.File(args.dataset, "r") as dataset:
+        df = loader.dataset_metadata_as_dataframe(dataset, key='ct_scans')
         df = df[df.subset == args.subset]
         scan_ids = set(df.seriesuid)
         metrics = []
-        for seriesuid in tqdm(scan_ids, desc="eval scans"):
-            dataset = dataset_orig.copy()
+    for seriesuid in tqdm(scan_ids, desc="eval scans"):
+        with h5py.File(args.dataset, "r") as dataset:
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
@@ -122,17 +122,18 @@ def main():
             }
             metrics.append(scan_metrics)
 
-        columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
-        metrics_df = pd.DataFrame(metrics, columns=columns)
-        metrics_df.to_csv(args.csv_output)
+    # Export metrics
+    columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
+    metrics_df = pd.DataFrame(metrics, columns=columns)
+    metrics_df.to_csv(args.csv_output)
 
-        if args.csv_candidates:
-            pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
+    if args.csv_candidates:
+        pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
 
-        print("Metrics mean for the subset:")
-        print(metrics_df.mean())
-        print("\nMetrics variance for the subset:")
-        print(metrics_df.var())
+    print("Metrics mean for the subset:")
+    print(metrics_df.mean())
+    print("\nMetrics variance for the subset:")
+    print(metrics_df.var())
 
 
 if __name__ == '__main__':
