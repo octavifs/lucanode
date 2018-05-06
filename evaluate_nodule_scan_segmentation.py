@@ -98,7 +98,7 @@ def main():
 
             # Predict mask
             #scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
-            scan_dice = 0.5
+            scan_dice = np.array([0.5])
             scan_mask = np.zeros(dataset["ct_scans"][seriesuid].shape)
 
             # Retrieve candidates
