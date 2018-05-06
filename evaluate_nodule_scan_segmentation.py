@@ -10,6 +10,7 @@ from lucanode.training import DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet, UnetSansBN
 from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
+import gc
 
 
 def predict(seriesuid, model, dataset_gen, dataset):
@@ -100,7 +101,9 @@ def main():
             scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
 
             # Retrieve candidates
-            pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid, dataset["ct_scans"][seriesuid], scan_mask)
+            pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
+                                                                    dict(dataset["ct_scans"][seriesuid].attrs),
+                                                                    scan_mask)
             candidates.append(pred_df)
 
             # Evaluate candidates
@@ -118,6 +121,7 @@ def main():
                 "P": P
             }
             metrics.append(scan_metrics)
+            gc.collect()
 
         columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
         metrics_df = pd.DataFrame(metrics, columns=columns)

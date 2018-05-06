@@ -5,15 +5,15 @@ import pandas as pd
 from skimage import measure
 
 
-def retrieve_candidates_dataset(seriesuid, dataset, predictions, threshold=0.5):
+def retrieve_candidates_dataset(seriesuid, dataset_attrs, predictions, threshold=0.5):
     """Extract nodule candidates from scan predictions"""
     nodule_mask = predictions > threshold
     labels = measure.label(nodule_mask)
     regionprops = measure.regionprops(labels)
     rows = []
     for props in regionprops:
-        origin = np.array(dataset.attrs["origin"], dtype=np.float32)[::-1]
-        centroid_offset = plane_centroid(props.centroid, "axial") * np.array(dataset.attrs["spacing"], dtype=np.float32)[::-1]
+        origin = np.array(dataset_attrs["origin"], dtype=np.float32)[::-1]
+        centroid_offset = plane_centroid(props.centroid, "axial") * np.array(dataset_attrs["spacing"], dtype=np.float32)[::-1]
         centroid = origin + centroid_offset
         relative_centroid = weighted_relative_centroid(props, "axial")
         squareness = squareness_ratio(props)
