@@ -12,7 +12,7 @@ from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
 
 
-def predict(model, dataset_gen, dataset):
+def predict(seriesuid, model, dataset_gen, dataset):
     mask_batches = []
     dice_batches = []
     for (X, y), _ in tqdm(zip(dataset_gen, range(len(dataset_gen))), total=len(dataset_gen), desc="eval batches"):
@@ -97,7 +97,7 @@ def main():
             )
 
             # Predict mask
-            scan_dice, scan_mask = predict(model, dataset_gen, dataset)
+            scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
 
             # Retrieve candidates
             pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid, dataset["ct_scans"][seriesuid], scan_mask)
