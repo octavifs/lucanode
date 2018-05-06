@@ -11,6 +11,8 @@ from lucanode.models.unet import Unet, UnetSansBN
 from lucanode.metrics import eval_dice_coef
 from lucanode import nodule_candidates
 
+import gc
+
 
 def predict(seriesuid, model, dataset_gen, dataset):
     mask_batches = []
@@ -85,6 +87,7 @@ def main():
         scan_ids = set(df.seriesuid)
         metrics = []
         for seriesuid in tqdm(scan_ids, desc="eval scans"):
+            gc.collect()
             # Prepare data loader
             df_view = df[df.seriesuid == seriesuid]
             dataset_gen = loader.NoduleSegmentationSequence(
@@ -103,7 +106,7 @@ def main():
             pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
                                                                     dict(dataset["ct_scans"][seriesuid].attrs),
                                                                     scan_mask)
-            #candidates.append(pred_df)
+            candidates.append(pred_df)
 
             # Evaluate candidates
             pred_df = pred_df.reset_index()
@@ -126,8 +129,8 @@ def main():
     metrics_df = pd.DataFrame(metrics, columns=columns)
     metrics_df.to_csv(args.csv_output)
 
-    #if args.csv_candidates:
-    #    pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
+    if args.csv_candidates:
+        pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
 
     print("Metrics mean for the subset:")
     print(metrics_df.mean())
