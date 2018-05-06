@@ -24,7 +24,7 @@ def predict(seriesuid, model, dataset_gen, dataset):
         mask_batches.append(y_pred)
     scan_dice = np.array(dice_batches)
     scan_mask = np.squeeze(np.concatenate(mask_batches))
-    scan_mask = augmentation.crop_to_shape(scan_mask, dataset["ct_scans"][seriesuid].shape)
+    scan_mask = augmentation.crop_to_shape(scan_mask, dataset["lung_masks"][seriesuid].shape)
     return scan_dice, scan_mask
 
 
