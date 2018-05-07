@@ -41,7 +41,6 @@ if __name__ == '__main__':
                 dataset,
                 batch_size=args.batch_size,
                 dataframe=df_view,
-                do_augmentation=False,
                 epoch_frac=1.0,
                 epoch_shuffle=False
             )

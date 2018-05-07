@@ -6,11 +6,13 @@ from math import ceil
 from lucanode import augmentation
 from skimage import measure
 from tqdm import tqdm
+from keras.preprocessing.image import ImageDataGenerator
+import random
 
 from lucanode.training import DEFAULT_UNET_SIZE
 
 
-class LunaSequence(Sequence):
+class LunaSeqLuence(Sequence):
     def __init__(self, df, data_array, batch_size, do_augmentation=True, do_nodule_segmentation=True):
         """
         Dataset loader to use when called via model.fit_generator
@@ -25,7 +27,6 @@ class LunaSequence(Sequence):
         df = self._filter_nodule_boundary_slices(df)
         # Augment dataframe with transformations and shuffle it in random order
         if do_augmentation:
-            df = augmentation.augment_dataframe(df)
             df = df.sample(frac=1)
         self.df = df
         self.data_array = data_array
@@ -234,8 +235,9 @@ def dataset_metadata_as_dataframe(dataset, key="lung_masks"):
 
 
 class LungSegmentationSequence(Sequence):
-    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, dataframe=None, do_augmentation=True,
-                 epoch_len=None, epoch_frac=0.1, epoch_shuffle=True):
+    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, dataframe=None,
+                 epoch_len=None, epoch_frac=1.0, epoch_shuffle=True, laplacian=False, augment_factor=1,
+                 mislabel=0.0, nodule_mask_key="nodule_masks_spherical"):
         self.dataset = dataset
         self.batch_size = batch_size
 
@@ -244,36 +246,50 @@ class LungSegmentationSequence(Sequence):
         else:
             df = dataset_metadata_as_dataframe(self.dataset)
             self.df = df[df.subset.isin(subsets)]
-        if do_augmentation:
-            self.df = self._augment_dataframe(self.df)
+        self.augment_factor = augment_factor
+        self.img_gen = ImageDataGenerator(
+            rotation_range=10,
+            shear_range=0.2,
+            zoom_range=0.2,
+            vertical_flip=True,
+            horizontal_flip=True,
+            data_format="channels_last"
+        )
+        self.mislabel = mislabel
+        self.nodule_mask_key = nodule_mask_key
         self.epoch_len = epoch_len
         self.epoch_frac = epoch_frac
         self.epoch_shuffle = epoch_shuffle
         self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
+        self.laplacian = laplacian
 
     def __len__(self):
-        return ceil(len(self.epoch_df) / self.batch_size)
+        return ceil(len(self.epoch_df) * self.augment_factor / self.batch_size)
 
     def on_epoch_end(self):
         if self.epoch_shuffle:
             self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
 
-    def _augment_dataframe(self, dataframe):
-        return dataframe
-
     def _apply_preprocessing(self, slices):
         for scan, mask in slices:
+            scan = augmentation.LaplacianTransform(scan).apply(self.laplacian)
             yield (
                 augmentation.crop_to_shape(scan, DEFAULT_UNET_SIZE),
                 augmentation.crop_to_shape(mask, DEFAULT_UNET_SIZE)
             )
 
     def _apply_augmentation(self, slices):
-        pass
+        for scan, mask in slices:
+            if self.augment_factor > 1:
+                comb_img = np.concatenate([scan, mask], axis=-1)
+                transformed_img = self.img_gen.random_transform(comb_img)
+                scan = transformed_img[:, :, :-1]
+                mask = transformed_img[:, :, -1]
+            yield scan, mask
 
     def _get_batch_metadata(self, idx):
-        idx_df_min = idx * self.batch_size
-        idx_df_max = (idx + 1) * self.batch_size
+        idx_df_min = idx * self.batch_size % len(self.epoch_df)
+        idx_df_max = (idx + 1) * self.batch_size % len(self.epoch_df)
         for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
             yield r
 
@@ -281,17 +297,18 @@ class LungSegmentationSequence(Sequence):
         for row in metadata:
             scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
             mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
-            yield scan, mask
+            yield scan[:, :, np.newaxis], mask[:, :, np.newaxis]
 
     def __getitem__(self, idx):
         metadata_gen = self._get_batch_metadata(idx)
         raw_slices_gen = self._get_slices(metadata_gen)
-        slices_gen = self._apply_preprocessing(raw_slices_gen)
+        slices_preprocessed_gen = self._apply_preprocessing(raw_slices_gen)
+        slices_gen = self._apply_augmentation(slices_preprocessed_gen)
         batch_x = []
         batch_y = []
         for scan, mask in slices_gen:
-            batch_x.append(scan[:, :, np.newaxis])
-            batch_y.append(mask[:, :, np.newaxis].astype(np.int))
+            batch_x.append(scan)
+            batch_y.append(mask.astype(np.int))
         batch_x = np.array(batch_x)
         batch_y = np.array(batch_y)
         return batch_x, batch_y
@@ -302,9 +319,30 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
         for row in metadata:
             scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
             lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
-            if row.seriesuid in self.dataset["nodule_masks_spherical"]:
-                nodule_mask = self.dataset["nodule_masks_spherical"][row.seriesuid][row.slice_idx, :, :] > 0
+            if row.seriesuid in self.dataset[self.nodule_mask_key] or random.random() >= self.mislabel:
+                nodule_mask = self.dataset[self.nodule_mask_key][row.seriesuid][row.slice_idx, :, :] > 0
             else:
                 nodule_mask = np.zeros(scan.shape, scan.dtype)
             masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
-            yield masked_scan, nodule_mask
+            yield masked_scan[:, :, np.newaxis], nodule_mask[:, :, np.newaxis]
+
+
+class NoduleSegmentation3CHSequence(LungSegmentationSequence):
+    def _get_1ch_slice(self, seriesuid, slice_idx):
+        scan = self.dataset["ct_scans"][seriesuid][slice_idx, :, :]
+        lung_mask = self.dataset["lung_masks"][seriesuid][slice_idx, :, :] > 0
+        masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
+        return masked_scan[:, :, np.newaxis]
+
+    def _get_slices(self, metadata):
+        for row in metadata:
+            masked_scan = np.concatenate([
+                self._get_1ch_slice(row.seriesuid, row.slice_idx - 1),
+                self._get_1ch_slice(row.seriesuid, row.slice_idx),
+                self._get_1ch_slice(row.seriesuid, row.slice_idx + 1)
+            ], axis=-1)
+            if row.seriesuid in self.dataset[self.nodule_mask_key] or random.random() >= self.mislabel:
+                nodule_mask = self.dataset[self.nodule_mask_key][row.seriesuid][row.slice_idx, :, :] > 0
+            else:
+                nodule_mask = np.zeros(masked_scan.shape[:-1], masked_scan.dtype)
+            yield masked_scan, nodule_mask[:, :, np.newaxis]

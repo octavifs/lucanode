@@ -62,14 +62,12 @@ def train_lung_segmentation(
         training_loader = loader.LungSegmentationSequence(
             dataset,
             batch_size,
-            do_augmentation=False,
             epoch_frac=0.1
         )
         validation_loader = loader.LungSegmentationSequence(
             dataset,
             batch_size,
             subsets={8},
-            do_augmentation=False,
             epoch_frac=0.3,
             epoch_shuffle=False
         )
@@ -121,7 +119,6 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
             dataset,
             batch_size,
             dataframe=df_training,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
@@ -130,7 +127,6 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
             dataset,
             batch_size,
             dataframe=df_validation,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
@@ -182,7 +178,6 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
             dataset,
             batch_size,
             dataframe=df_training,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
@@ -191,7 +186,6 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
             dataset,
             batch_size,
             dataframe=df_validation,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
@@ -243,7 +237,6 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
             dataset,
             batch_size,
             dataframe=df_training,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
@@ -252,7 +245,6 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
             dataset,
             batch_size,
             dataframe=df_validation,
-            do_augmentation=False,
             epoch_frac=1.0,
             epoch_shuffle=False
         )
