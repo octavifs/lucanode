@@ -261,7 +261,7 @@ class LungSegmentationSequence(Sequence):
         self.epoch_frac = epoch_frac
         self.epoch_shuffle = epoch_shuffle
         self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
-        self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor)
+        self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor).sample(frac=1.0)
         self.laplacian = laplacian
 
     def __len__(self):

@@ -299,7 +299,7 @@ def train_nodule_segmentation_augmentation_normalization_dice(
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=False,
-            augment_factor=10,
+            augment_factor=5,
             mislabel=0.0,
         )
         df_validation = df[df.subset.isin([8]) & df.has_mask]
