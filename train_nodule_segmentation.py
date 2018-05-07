@@ -11,6 +11,12 @@ NETWORK_VARIATIONS = {
         detection.train_nodule_segmentation_no_augmentation_normalization_dice,
     "augmentation_normalization_dice_3ch_laplacian_mislabeling":
         detection.train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_mislabeling,
+    "augmentation_normalization_dice":
+        detection.train_nodule_segmentation_augmentation_normalization_dice,
+    "augmentation_normalization_dice_3ch":
+        detection.train_nodule_segmentation_augmentation_normalization_dice_3ch,
+    "augmentation_normalization_dice_3ch_laplacian":
+        detection.train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian,
 }
 
 if __name__ == '__main__':
