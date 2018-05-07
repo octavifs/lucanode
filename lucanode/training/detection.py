@@ -324,7 +324,7 @@ def train_nodule_segmentation_augmentation_normalization_dice(
         history_log = HistoryLog(output_weights_file + ".history")
 
         # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
+        network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
         model = Unet(*network_size)
 
         if initial_weights:
