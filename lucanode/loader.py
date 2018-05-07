@@ -12,7 +12,7 @@ import random
 from lucanode.training import DEFAULT_UNET_SIZE
 
 
-class LunaSeqLuence(Sequence):
+class LunaSequence(Sequence):
     def __init__(self, df, data_array, batch_size, do_augmentation=True, do_nodule_segmentation=True):
         """
         Dataset loader to use when called via model.fit_generator
@@ -292,8 +292,8 @@ class LungSegmentationSequence(Sequence):
             yield scan, mask
 
     def _get_batch_metadata(self, idx):
-        idx_df_min = idx * self.batch_size % len(self.epoch_df)
-        idx_df_max = (idx + 1) * self.batch_size % len(self.epoch_df)
+        idx_df_min = idx * self.batch_size // self.augment_factor
+        idx_df_max = (idx + 1) * self.batch_size // self.augment_factor
         for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
             yield r
 
