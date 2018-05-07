@@ -261,10 +261,11 @@ class LungSegmentationSequence(Sequence):
         self.epoch_frac = epoch_frac
         self.epoch_shuffle = epoch_shuffle
         self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
+        self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor)
         self.laplacian = laplacian
 
     def __len__(self):
-        return ceil(len(self.epoch_df) * self.augment_factor / self.batch_size)
+        return ceil(len(self.epoch_df) / self.batch_size)
 
     def on_epoch_end(self):
         if self.epoch_shuffle:
@@ -292,8 +293,8 @@ class LungSegmentationSequence(Sequence):
             yield scan, mask
 
     def _get_batch_metadata(self, idx):
-        idx_df_min = idx * self.batch_size // self.augment_factor
-        idx_df_max = (idx + 1) * self.batch_size // self.augment_factor
+        idx_df_min = idx * self.batch_size
+        idx_df_max = (idx + 1) * self.batch_size
         for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
             yield r
 
