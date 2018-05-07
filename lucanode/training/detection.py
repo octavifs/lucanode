@@ -299,7 +299,7 @@ def train_nodule_segmentation_augmentation_normalization_dice(
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=False,
-            augment_factor=5,
+            augment_factor=10,
             mislabel=0.0,
         )
         df_validation = df[df.subset.isin([8]) & df.has_mask]
@@ -310,7 +310,7 @@ def train_nodule_segmentation_augmentation_normalization_dice(
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=False,
-            augment_factor=5,
+            augment_factor=1,
             mislabel=0.0,
         )
 
@@ -375,7 +375,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch(
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=False,
-            augment_factor=5,
+            augment_factor=1,
             mislabel=0.0,
         )
 
@@ -440,7 +440,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=True,
-            augment_factor=5,
+            augment_factor=1,
             mislabel=0.0,
         )
 
@@ -505,7 +505,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
             epoch_frac=1.0,
             epoch_shuffle=True,
             laplacian=True,
-            augment_factor=5,
+            augment_factor=1,
             mislabel=0.1,
         )
 
