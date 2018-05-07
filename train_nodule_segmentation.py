@@ -8,7 +8,9 @@ NETWORK_VARIATIONS = {
     "no_augmentation_normalization_binary_crossentropy":
         detection.train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy,
     "no_augmentation_normalization_dice":
-        detection.train_nodule_segmentation_no_augmentation_normalization_dice
+        detection.train_nodule_segmentation_no_augmentation_normalization_dice,
+    "augmentation_normalization_dice_3ch_laplacian_mislabeling":
+        detection.train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_mislabeling,
 }
 
 if __name__ == '__main__':
