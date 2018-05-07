@@ -274,8 +274,8 @@ class LungSegmentationSequence(Sequence):
         for scan, mask in slices:
             scan = augmentation.LaplacianTransform(scan).apply(self.laplacian)
             yield (
-                augmentation.crop_to_shape(scan, DEFAULT_UNET_SIZE),
-                augmentation.crop_to_shape(mask, DEFAULT_UNET_SIZE)
+                augmentation.crop_to_shape(scan, [*DEFAULT_UNET_SIZE, scan.shape[-1]]),
+                augmentation.crop_to_shape(mask, [*DEFAULT_UNET_SIZE, mask.shape[-1]])
             )
 
     def _apply_augmentation(self, slices):
@@ -285,6 +285,10 @@ class LungSegmentationSequence(Sequence):
                 transformed_img = self.img_gen.random_transform(comb_img)
                 scan = transformed_img[:, :, :-1]
                 mask = transformed_img[:, :, -1]
+            if scan.ndim < 3:
+                scan = scan[:, :, np.newaxis]
+            if mask.ndim < 3:
+                mask = mask[:, :, np.newaxis]
             yield scan, mask
 
     def _get_batch_metadata(self, idx):
