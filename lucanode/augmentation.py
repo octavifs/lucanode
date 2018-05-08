@@ -250,7 +250,7 @@ def augment_dataframe(df, transformations=TRANSFORMATIONS):
     return pd.DataFrame(generator)
 
 
-def crop_to_shape(arr, shape):
+def crop_to_shape(arr, shape, cval=0):
     """Crops a numpy array into the specified shape. If the array was larger, return centered crop. If it was smaller,
     return a larger array with the original data in the center"""
     if arr.ndim != len(shape):
@@ -259,7 +259,7 @@ def crop_to_shape(arr, shape):
     arr_shape = np.array(arr.shape)
     shape = np.array(shape)
     max_shape = np.stack([arr_shape, shape]).max(axis=0)
-    output_arr = np.zeros(max_shape, dtype=arr.dtype)
+    output_arr = np.ones(max_shape, dtype=arr.dtype) * cval
 
     arr_min = ((max_shape - arr_shape) / 2).astype(np.int)
     arr_max = arr_min + arr_shape

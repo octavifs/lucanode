@@ -253,7 +253,8 @@ class LungSegmentationSequence(Sequence):
             zoom_range=0.2,
             vertical_flip=True,
             horizontal_flip=True,
-            data_format="channels_last"
+            data_format="channels_last",
+            fill_mode="nearest",
         )
         self.mislabel = mislabel
         self.nodule_mask_key = nodule_mask_key
@@ -261,7 +262,7 @@ class LungSegmentationSequence(Sequence):
         self.epoch_frac = epoch_frac
         self.epoch_shuffle = epoch_shuffle
         self.epoch_df = self.df.sample(n=epoch_len, frac=epoch_frac)
-        self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor).sample(frac=1.0)
+        self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor, ignore_index=True).sample(frac=1.0)
         self.laplacian = laplacian
 
     def __len__(self):
@@ -275,7 +276,7 @@ class LungSegmentationSequence(Sequence):
         for scan, mask in slices:
             scan = augmentation.LaplacianTransform(scan).apply(self.laplacian)
             yield (
-                augmentation.crop_to_shape(scan, [*DEFAULT_UNET_SIZE, scan.shape[-1]]),
+                augmentation.crop_to_shape(scan, [*DEFAULT_UNET_SIZE, scan.shape[-1]], cval=-4000),
                 augmentation.crop_to_shape(mask, [*DEFAULT_UNET_SIZE, mask.shape[-1]])
             )
 
