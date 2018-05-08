@@ -57,48 +57,49 @@ def train_lung_segmentation(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        training_loader = loader.LungSegmentationSequence(
-            dataset,
-            batch_size,
-            epoch_frac=0.1
-        )
-        validation_loader = loader.LungSegmentationSequence(
-            dataset,
-            batch_size,
-            subsets={8},
-            epoch_frac=0.3,
-            epoch_shuffle=False
-        )
+    # Loaders
+    training_loader = loader.LungSegmentationSequence(
+        dataset_file,
+        batch_size,
+        epoch_frac=0.1
+    )
+    validation_loader = loader.LungSegmentationSequence(
+        dataset_file,
+        batch_size,
+        subsets={8},
+        epoch_frac=0.3,
+        epoch_shuffle=False
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 1]
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 1]
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentropy(
@@ -111,53 +112,56 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
-        model = UnetSansBN(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
+    model = UnetSansBN(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
@@ -170,53 +174,56 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_no_augmentation_normalization_dice(
@@ -229,53 +236,56 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=False
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=False
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_augmentation_normalization_dice(
@@ -288,59 +298,62 @@ def train_nodule_segmentation_augmentation_normalization_dice(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=False,
-            augment_factor=5,
-            mislabel=0.0,
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=False,
-            augment_factor=1,
-            mislabel=0.0,
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=False,
+        augment_factor=5,
+        mislabel=0.0,
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=False,
+        augment_factor=1,
+        mislabel=0.0,
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_augmentation_normalization_dice_3ch(
@@ -353,59 +366,62 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentation3CHSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=False,
-            augment_factor=5,
-            mislabel=0.0,
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentation3CHSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=False,
-            augment_factor=1,
-            mislabel=0.0,
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=False,
+        augment_factor=5,
+        mislabel=0.0,
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=False,
+        augment_factor=1,
+        mislabel=0.0,
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
@@ -418,59 +434,63 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=True,
-            augment_factor=5,
-            mislabel=0.0,
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentationSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=True,
-            augment_factor=1,
-            mislabel=0.0,
-        )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=True,
+        augment_factor=5,
+        mislabel=0.0,
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=True,
+        augment_factor=1,
+        mislabel=0.0,
+    )
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
-        model = Unet(*network_size)
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
+    model = Unet(*network_size)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    if initial_weights:
+        model.load_weights(initial_weights)
+
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
 
 
 def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_mislabeling(
@@ -483,56 +503,59 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
 ):
     """Train the network from scratch or from a preexisting set of weights on the dataset"""
 
-    with h5py.File(dataset_file, "r") as dataset:
-        # Loaders
-        df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
-        df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
-        training_loader = loader.NoduleSegmentation3CHSequence(
-            dataset,
-            batch_size,
-            dataframe=df_training,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=True,
-            augment_factor=5,
-            mislabel=0.1,
-        )
-        df_validation = df[df.subset.isin([8]) & df.has_mask]
-        validation_loader = loader.NoduleSegmentation3CHSequence(
-            dataset,
-            batch_size,
-            dataframe=df_validation,
-            epoch_frac=1.0,
-            epoch_shuffle=True,
-            laplacian=True,
-            augment_factor=1,
-            mislabel=0.1,
-        )
+    # Loaders
+    dataset = h5py.File(dataset_file, "r")
+    df = loader.dataset_metadata_as_dataframe(dataset, key='nodule_masks_spherical')
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7]) & df.has_mask]
+    dataset.close()
+    training_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=True,
+        augment_factor=5,
+        mislabel=0.1,
+    )
+    df_validation = df[df.subset.isin([8]) & df.has_mask]
+    validation_loader = loader.NoduleSegmentation3CHSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+        epoch_shuffle=True,
+        laplacian=True,
+        augment_factor=1,
+        mislabel=0.1,
+    )
 
-        # Callbacks
-        model_checkpoint = ModelCheckpoint(
-            output_weights_file,
-            monitor='loss',
-            verbose=1,
-            save_best_only=True
-        )
-        history_log = HistoryLog(output_weights_file + ".history")
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
 
-        # Setup network
-        network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
-        model = Unet(*network_size)
+    # Setup network
+    network_size = [*DEFAULT_UNET_SIZE, 3, dice_coef_loss]
+    model = Unet(*network_size)
 
-        if initial_weights:
-            model.load_weights(initial_weights)
+    if initial_weights:
+        model.load_weights(initial_weights)
 
-        # Train
-        model.fit_generator(
-            generator=training_loader,
-            epochs=num_epochs,
-            initial_epoch=last_epoch,
-            verbose=1,
-            validation_data=validation_loader,
-            use_multiprocessing=False,
-            shuffle=True,
-            callbacks=[model_checkpoint, history_log]
-        )
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )

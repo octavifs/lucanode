@@ -8,6 +8,7 @@ from skimage import measure
 from tqdm import tqdm
 from keras.preprocessing.image import ImageDataGenerator
 import random
+import h5py
 
 from lucanode.training import DEFAULT_UNET_SIZE
 
@@ -235,17 +236,20 @@ def dataset_metadata_as_dataframe(dataset, key="lung_masks"):
 
 
 class LungSegmentationSequence(Sequence):
-    def __init__(self, dataset, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, dataframe=None,
+    def __init__(self, dataset_path, batch_size, subsets={0, 1, 2, 3, 4, 5, 6, 7}, dataframe=None,
                  epoch_len=None, epoch_frac=1.0, epoch_shuffle=True, laplacian=False, augment_factor=1,
                  mislabel=0.0, nodule_mask_key="nodule_masks_spherical"):
-        self.dataset = dataset
-        self.batch_size = batch_size
-
+        self._dataset_path = dataset_path
+        self._dataset = None
         if dataframe is not None:
             self.df = dataframe
         else:
             df = dataset_metadata_as_dataframe(self.dataset)
             self.df = df[df.subset.isin(subsets)]
+            # Doing this 'cause we want to ensure lazy loading when fit_generator starts on a different process
+            self._dataset.close()
+            self._dataset = None
+        self.batch_size = batch_size
         self.augment_factor = augment_factor
         self.img_gen = ImageDataGenerator(
             rotation_range=10,
@@ -265,12 +269,20 @@ class LungSegmentationSequence(Sequence):
         self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor, ignore_index=True).sample(frac=1.0)
         self.laplacian = laplacian
 
+    @property
+    def dataset(self):
+        """lazy loading of the HDF5 dataset so that it can work well with multiprocessing when training the model"""
+        if not self._dataset:
+            self._dataset = h5py.File(self._dataset_path, "r")
+        return self._dataset
+
     def __len__(self):
         return ceil(len(self.epoch_df) / self.batch_size)
 
     def on_epoch_end(self):
         if self.epoch_shuffle:
             self.epoch_df = self.df.sample(n=self.epoch_len, frac=self.epoch_frac)
+            self.epoch_df = pd.concat([self.epoch_df] * self.augment_factor, ignore_index=True).sample(frac=1.0)
 
     def _apply_preprocessing(self, slices):
         for scan, mask in slices:
