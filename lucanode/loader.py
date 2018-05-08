@@ -330,6 +330,7 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
             else:
                 nodule_mask = np.zeros(scan.shape, scan.dtype)
             masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
+            nodule_mask *= lung_mask
             yield masked_scan[:, :, np.newaxis], nodule_mask[:, :, np.newaxis]
 
 
@@ -351,4 +352,6 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
                 nodule_mask = self.dataset[self.nodule_mask_key][row.seriesuid][row.slice_idx, :, :] > 0
             else:
                 nodule_mask = np.zeros(masked_scan.shape[:-1], masked_scan.dtype)
+            lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
+            nodule_mask *= lung_mask
             yield masked_scan, nodule_mask[:, :, np.newaxis]
