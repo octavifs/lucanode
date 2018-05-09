@@ -288,7 +288,7 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
     )
 
 
-def train_nodule_segmentation_augmentation_normalization_dice(
+def train_nodule_segmentation_augmentation_normalization_bce(
         dataset_file,
         output_weights_file,
         batch_size=5,
@@ -335,7 +335,7 @@ def train_nodule_segmentation_augmentation_normalization_dice(
     history_log = HistoryLog(output_weights_file + ".history")
 
     # Setup network
-    network_size = [*DEFAULT_UNET_SIZE, 1, dice_coef_loss]
+    network_size = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
     model = Unet(*network_size)
 
     if initial_weights:
