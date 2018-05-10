@@ -3,6 +3,7 @@ import pandas as pd
 import h5py
 from tqdm import tqdm
 import numpy as np
+import os
 
 from lucanode import loader
 from lucanode import augmentation
@@ -125,9 +126,11 @@ def main():
     # Export metrics
     columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
     metrics_df = pd.DataFrame(metrics, columns=columns)
+    os.makedirs(os.path.dirname(args.csv_output), exist_ok=True)  # Create directory to export file if it doesn't exist
     metrics_df.to_csv(args.csv_output)
 
     if args.csv_candidates:
+        os.makedirs(os.path.dirname(args.csv_candidates), exist_ok=True)  # Creates directory to export file
         pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
 
     print("Metrics mean for the subset:")
