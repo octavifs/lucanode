@@ -337,7 +337,7 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
         for row in metadata:
             scan = self.dataset["ct_scans"][row.seriesuid][row.slice_idx, :, :]
             lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
-            if row.seriesuid in self.dataset[self.nodule_mask_key] or random.random() >= self.mislabel:
+            if row.seriesuid in self.dataset[self.nodule_mask_key] and random.random() >= self.mislabel:
                 nodule_mask = self.dataset[self.nodule_mask_key][row.seriesuid][row.slice_idx, :, :] > 0
             else:
                 nodule_mask = np.zeros(scan.shape, scan.dtype)
