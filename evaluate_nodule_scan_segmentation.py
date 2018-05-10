@@ -100,9 +100,10 @@ def main():
         scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset)
 
         # Retrieve candidates
-        pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
-                                                                dict(dataset["ct_scans"][seriesuid].attrs),
-                                                                scan_mask)
+        with h5py.File(args.dataset, "r") as dataset:
+            pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
+                                                                    dict(dataset["ct_scans"][seriesuid].attrs),
+                                                                    scan_mask)
         candidates.append(pred_df)
 
         # Evaluate candidates
