@@ -12,7 +12,7 @@ from lucanode.metrics import np_dice_coef
 from lucanode import nodule_candidates
 
 
-def predict(seriesuid, model, dataset_gen, dataset):
+def predict(seriesuid, model, dataset_gen, dataset_path):
     mask_batches = []
     dice_batches = []
     for (X, y), _ in tqdm(zip(dataset_gen, range(len(dataset_gen))), total=len(dataset_gen), desc="eval batch"):
@@ -24,7 +24,8 @@ def predict(seriesuid, model, dataset_gen, dataset):
         mask_batches.append(y_pred)
     scan_dice = np.array(dice_batches)
     scan_mask = np.squeeze(np.concatenate(mask_batches))
-    scan_mask = augmentation.crop_to_shape(scan_mask, dataset["lung_masks"][seriesuid].shape)
+    with h5py.File(dataset_path, "r") as dataset:
+        scan_mask = augmentation.crop_to_shape(scan_mask, dataset["lung_masks"][seriesuid].shape)
     return scan_dice, scan_mask
 
 
@@ -96,7 +97,7 @@ def main():
         )
 
         # Predict mask
-        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
+        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset)
 
         # Retrieve candidates
         pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
