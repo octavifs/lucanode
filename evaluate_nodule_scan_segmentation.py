@@ -81,44 +81,44 @@ def main():
 
     with h5py.File(args.dataset, "r") as dataset:
         df = loader.dataset_metadata_as_dataframe(dataset, key='ct_scans')
-        df = df[df.subset == args.subset]
-        scan_ids = set(df.seriesuid)
-        metrics = []
-        for seriesuid in tqdm(scan_ids, desc="eval scans"):
-            # Prepare data loader
-            df_view = df[df.seriesuid == seriesuid]
-            dataset_gen = loader.NoduleSegmentationSequence(
-                dataset,
-                batch_size=args.batch_size,
-                dataframe=df_view,
-                epoch_frac=1.0,
-                epoch_shuffle=False
-            )
+    df = df[df.subset == args.subset]
+    scan_ids = set(df.seriesuid)
+    metrics = []
+    for seriesuid in tqdm(scan_ids, desc="eval scans"):
+        # Prepare data loader
+        df_view = df[df.seriesuid == seriesuid]
+        dataset_gen = loader.NoduleSegmentationSequence(
+            args.dataset,
+            batch_size=args.batch_size,
+            dataframe=df_view,
+            epoch_frac=1.0,
+            epoch_shuffle=False
+        )
 
-            # Predict mask
-            scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
+        # Predict mask
+        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, dataset)
 
-            # Retrieve candidates
-            pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
-                                                                    dict(dataset["ct_scans"][seriesuid].attrs),
-                                                                    scan_mask)
-            candidates.append(pred_df)
+        # Retrieve candidates
+        pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
+                                                                dict(dataset["ct_scans"][seriesuid].attrs),
+                                                                scan_mask)
+        candidates.append(pred_df)
 
-            # Evaluate candidates
-            pred_df = pred_df.reset_index()
-            ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
-            sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
+        # Evaluate candidates
+        pred_df = pred_df.reset_index()
+        ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
+        sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
-            # Save metrics
-            scan_metrics = {
-                "seriesuid": seriesuid,
-                "dice": scan_dice.mean(),
-                "sensitivity": sensitivity,
-                "FP": FP,
-                "TP": TP,
-                "P": P
-            }
-            metrics.append(scan_metrics)
+        # Save metrics
+        scan_metrics = {
+            "seriesuid": seriesuid,
+            "dice": scan_dice.mean(),
+            "sensitivity": sensitivity,
+            "FP": FP,
+            "TP": TP,
+            "P": P
+        }
+        metrics.append(scan_metrics)
 
     # Export metrics
     columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
