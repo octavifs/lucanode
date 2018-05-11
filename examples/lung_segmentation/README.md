@@ -1,22 +1,26 @@
 # Lung segmentation with lucanode and docker
 
-## Intro
+## Setup
+**PLEASE DO THIS**: Download the lung segmentation weights file from
+this [link](https://www.dropbox.com/s/c75fuur0yc6nkyw/lung_segmentation_e5b2112.h5?dl=0)
+and save it into the weights folder of this repo (same name) before 
+building the docker image. Otherwise it won't work.
 
+## Intro
 Lucanode has a script to segment any arbitrary CT scan supported by SimpleITK
 (file formats .mhd, .nii or .nii.gz are safe to use) to a mask file.
 
 This script can be executed from the lucanode docker image, so there is no
 need to install dependencies in your system.
 
-NOTE: GPU assisted prediction is NOT enabled in the Docker image, so the
-network will use CPU instead. For a whole scan (around 300 slices) this
+NOTE: GPU assisted prediction is **NOT** enabled in the Docker image, so
+the network will use CPU instead. For a whole scan (around 300 slices) this
 can take a long time (around 1h).
 
 For testing purposes I've included shorter ct scans, so the execution of
 the image is going to be faster.
 
 ## Building the docker image
-
 Run docker build at the root of the repo:
 
     $ docker build -t lucanode .
