@@ -5,5 +5,6 @@ RUN conda env update -f ./environment-cpu.yml -n base
 # Copy code
 COPY . /lucanode
 WORKDIR /lucanode
+ENV PYTHONPATH /lucanode
 # Define entrypoints
 VOLUME ["/input", "/output"]
