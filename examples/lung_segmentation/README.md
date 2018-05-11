@@ -2,7 +2,7 @@
 
 ## Setup
 **PLEASE DO THIS**: Download the lung segmentation weights file from
-this [link](https://www.dropbox.com/s/c75fuur0yc6nkyw/lung_segmentation_e5b2112.h5?dl=0)
+this [link](https://www.dropbox.com/s/d8p9ona9lshqdm7/lung_segmentation_e5b2112.h5?dl=0)
 and save it into the weights folder of this repo (same name) before 
 building the docker image. Otherwise it won't work.
 
