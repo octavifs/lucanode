@@ -347,9 +347,9 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
 
 
 class NoduleSegmentation3CHSequence(LungSegmentationSequence):
-    def _get_1ch_slice(self, seriesuid, slice_idx, rng=None):
-        if (rng is not None) and (slice_idx < 0 or slice_idx >= rng):
-            return np.ones((1, 1, 1)) * -4000
+    def _get_1ch_slice(self, seriesuid, slice_idx, scan_shape=None):
+        if (scan_shape is not None) and (slice_idx < 0 or slice_idx >= scan_shape[0]):
+            return np.ones((*scan_shape, 1)) * -4000
         scan = self.dataset["ct_scans"][seriesuid][slice_idx, :, :]
         lung_mask = self.dataset["lung_masks"][seriesuid][slice_idx, :, :] > 0
         masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
@@ -357,11 +357,11 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
 
     def _get_slices(self, metadata):
         for row in metadata:
-            num_scan_slices = self.dataset["ct_scans"][row.seriesuid].shape[0]
+            scan_shape = self.dataset["ct_scans"][row.seriesuid].shape[0]
             masked_scan = np.concatenate([
-                self._get_1ch_slice(row.seriesuid, row.slice_idx - 1, num_scan_slices),
+                self._get_1ch_slice(row.seriesuid, row.slice_idx - 1, scan_shape),
                 self._get_1ch_slice(row.seriesuid, row.slice_idx),
-                self._get_1ch_slice(row.seriesuid, row.slice_idx + 1, num_scan_slices)
+                self._get_1ch_slice(row.seriesuid, row.slice_idx + 1, scan_shape)
             ], axis=-1)
             if row.seriesuid in self.dataset[self.nodule_mask_key] and random.random() >= self.mislabel:
                 nodule_mask = self.dataset[self.nodule_mask_key][row.seriesuid][row.slice_idx, :, :] > 0
