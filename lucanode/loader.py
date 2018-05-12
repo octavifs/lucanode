@@ -349,7 +349,7 @@ class NoduleSegmentationSequence(LungSegmentationSequence):
 class NoduleSegmentation3CHSequence(LungSegmentationSequence):
     def _get_1ch_slice(self, seriesuid, slice_idx, scan_shape=None):
         if (scan_shape is not None) and (slice_idx < 0 or slice_idx >= scan_shape[0]):
-            return np.ones((*scan_shape, 1)) * -4000
+            return np.ones((*scan_shape[1:], 1)) * -4000
         scan = self.dataset["ct_scans"][seriesuid][slice_idx, :, :]
         lung_mask = self.dataset["lung_masks"][seriesuid][slice_idx, :, :] > 0
         masked_scan = scan * lung_mask + (lung_mask - 1) * 4000  # Apply lung segmentation to the scan
