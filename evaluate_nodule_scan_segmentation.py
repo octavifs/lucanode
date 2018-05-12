@@ -58,6 +58,7 @@ def main():
                         help="evaluation batch size")
     parser.add_argument('--no-normalization', dest='batch_normalization', action='store_false')
     parser.add_argument('--loss-binary-crossentropy', dest='loss_binary_crossentropy', action='store_true')
+    parser.add_argument('--ch3', dest='ch3', action='store_true')
     args = parser.parse_args()
 
     print("""
@@ -89,7 +90,11 @@ def main():
     for seriesuid in tqdm(scan_ids, desc="eval scans"):
         # Prepare data loader
         df_view = df[df.seriesuid == seriesuid]
-        dataset_gen = loader.NoduleSegmentationSequence(
+        if args.ch3:
+            loader_class = loader.NoduleSegmentation3CHSequence
+        else:
+            loader_class = loader.NoduleSegmentationSequence
+        dataset_gen = loader_class(
             args.dataset,
             batch_size=args.batch_size,
             dataframe=df_view,
