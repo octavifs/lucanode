@@ -68,7 +68,7 @@ def main():
 ############################################
 """)
 
-    if args.ch3
+    if args.ch3:
         num_channels = 3
     else:
         num_channels = 1
