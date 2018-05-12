@@ -68,11 +68,14 @@ def main():
 ############################################
 """)
 
-    if args.loss_binary_crossentropy:
-        network_shape = [*DEFAULT_UNET_SIZE, 1, 'binary_crossentropy']
+    if args.ch3
+        num_channels = 3
     else:
-        network_shape = [*DEFAULT_UNET_SIZE, 1]
-
+        num_channels = 1
+    if args.loss_binary_crossentropy:
+        network_shape = [*DEFAULT_UNET_SIZE, num_channels, 'binary_crossentropy']
+    else:
+        network_shape = [*DEFAULT_UNET_SIZE, num_channels]
     if args.batch_normalization:
         model = Unet(*network_shape)
     else:
