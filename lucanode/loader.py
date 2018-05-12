@@ -357,7 +357,7 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
 
     def _get_slices(self, metadata):
         for row in metadata:
-            scan_shape = self.dataset["ct_scans"][row.seriesuid].shape[0]
+            scan_shape = self.dataset["ct_scans"][row.seriesuid].shape
             masked_scan = np.concatenate([
                 self._get_1ch_slice(row.seriesuid, row.slice_idx - 1, scan_shape),
                 self._get_1ch_slice(row.seriesuid, row.slice_idx),
