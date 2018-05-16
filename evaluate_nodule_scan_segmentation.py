@@ -136,6 +136,8 @@ def main():
             dataset_filename = Path(args.mask_predictions)
             mode = 'r+' if dataset_filename.exists() else 'w'
             with h5py.File(dataset_filename, mode) as export_ds:
+                if seriesuid in export_ds.keys():
+                    del export_ds[seriesuid]
                 export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
 
         # Save metrics
