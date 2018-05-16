@@ -130,7 +130,7 @@ def main():
         sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
         # Save mask
-        dataset_filename = Path(args.output) / "mask_predictions_subset%d.csv" % (args.subset, )
+        dataset_filename = Path(args.output) / ("masks_subset%d.csv" % (args.subset, ))
         mode = 'r+' if dataset_filename.exists() else 'w'
         with h5py.File(dataset_filename, mode) as export_ds:
             if seriesuid in export_ds.keys():
@@ -152,13 +152,13 @@ def main():
     columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
     metrics_df = pd.DataFrame(metrics, columns=columns)
     metrics_df.to_csv(Path(args.output) / "evaluation_subset%d.h5" % (args.subset,))
-    pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / "candidates_subset%d.csv" % (args.subset,))
+    pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (args.subset,)))
 
     metrics = "Metrics mean for the subset: %s\n\nMetrics variance for the subset: %s" % (
         repr(metrics_df.mean()),
         repr(metrics_df.var())
     )
-    with open(Path(args.output) / "metrics_subset%d.txt" % (args.subset,), "w") as fd:
+    with open(Path(args.output) / ("metrics_subset%d.txt" % (args.subset,)), "w") as fd:
         fd.write(metrics)
     print(metrics)
 
