@@ -132,6 +132,7 @@ def main():
 
         # Save mask, if required
         if args.mask_predictions:
+            os.makedirs(os.path.dirname(args.mask_predictions), exist_ok=True)
             dataset_filename = Path(args.mask_predictions)
             mode = 'r+' if dataset_filename.exists() else 'w'
             with h5py.File(dataset_filename, mode) as export_ds:
