@@ -56,11 +56,8 @@ def main():
     parser.add_argument('dataset', type=str, help="Path to the hdf5 with the equalized spaced data")
     parser.add_argument('csv_annotations', type=str, help="CSV with real annotations")
     parser.add_argument('model_weights', type=str, help="path where the model weights are stored")
+    parser.add_argument('output', type=str, help="path where to store the detailed output")
     parser.add_argument('subset', type=int, help="subset for which you want evaluate the segmentation")
-    parser.add_argument('csv_output', type=str, help="path where to store the detailed CSV output")
-    parser.add_argument('--candidates', dest='csv_candidates', type=str, help="path where to store the candidates CSV output")
-    parser.add_argument('--mask-predictions', dest='mask_predictions', type=str,
-                        help="path where to store the predicted masks")
     parser.add_argument('--batch-size', dest='batch_size', type=int, default=5, action="store",
                         help="evaluation batch size")
     parser.add_argument('--no-normalization', dest='batch_normalization', action='store_false')
@@ -76,6 +73,8 @@ def main():
 ######### lucanode scan evaluation #########
 ############################################
 """)
+    # Create directory for exports if it doesn't exist
+    os.makedirs(args.output, exist_ok=True)
 
     if args.ch3:
         num_channels = 3
@@ -130,15 +129,13 @@ def main():
         ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
         sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
-        # Save mask, if required
-        if args.mask_predictions:
-            os.makedirs(os.path.dirname(args.mask_predictions), exist_ok=True)
-            dataset_filename = Path(args.mask_predictions)
-            mode = 'r+' if dataset_filename.exists() else 'w'
-            with h5py.File(dataset_filename, mode) as export_ds:
-                if seriesuid in export_ds.keys():
-                    del export_ds[seriesuid]
-                export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
+        # Save mask
+        dataset_filename = Path(args.output) / "mask_predictions_subset%d.csv" % (args.subset, )
+        mode = 'r+' if dataset_filename.exists() else 'w'
+        with h5py.File(dataset_filename, mode) as export_ds:
+            if seriesuid in export_ds.keys():
+                del export_ds[seriesuid]
+            export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
 
         # Save metrics
         scan_metrics = {
@@ -154,17 +151,16 @@ def main():
     # Export metrics
     columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
     metrics_df = pd.DataFrame(metrics, columns=columns)
-    os.makedirs(os.path.dirname(args.csv_output), exist_ok=True)  # Create directory to export file if it doesn't exist
-    metrics_df.to_csv(args.csv_output)
+    metrics_df.to_csv(Path(args.output) / "evaluation_subset%d.h5" % (args.subset,))
+    pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / "candidates_subset%d.csv" % (args.subset,))
 
-    if args.csv_candidates:
-        os.makedirs(os.path.dirname(args.csv_candidates), exist_ok=True)  # Creates directory to export file
-        pd.concat(candidates, ignore_index=True).to_csv(args.csv_candidates)
-
-    print("Metrics mean for the subset:")
-    print(metrics_df.mean())
-    print("\nMetrics variance for the subset:")
-    print(metrics_df.var())
+    metrics = "Metrics mean for the subset: %s\n\nMetrics variance for the subset: %s" % (
+        repr(metrics_df.mean()),
+        repr(metrics_df.var())
+    )
+    with open(Path(args.output) / "metrics_subset%d.txt" % (args.subset,), "w") as fd:
+        fd.write(metrics)
+    print(metrics)
 
 
 if __name__ == '__main__':
