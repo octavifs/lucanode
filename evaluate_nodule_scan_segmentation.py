@@ -4,6 +4,7 @@ import h5py
 from tqdm import tqdm
 import numpy as np
 import os
+from pathlib import Path
 
 from lucanode import loader
 from lucanode import augmentation
@@ -13,20 +14,24 @@ from lucanode.metrics import np_dice_coef
 from lucanode import nodule_candidates
 
 
-def predict(seriesuid, model, dataset_gen, dataset_path):
-    mask_batches = []
-    dice_batches = []
-    for (X, y), _ in tqdm(zip(dataset_gen, range(len(dataset_gen))), total=len(dataset_gen), desc="eval batch"):
-        y_pred = model.predict_on_batch(X)
-        if X.shape[0] == 1:
-            y_pred = np.array(y_pred)
-        dice = np_dice_coef(y, y_pred)
-        dice_batches.append(dice)
-        mask_batches.append(y_pred)
-    scan_dice = np.array(dice_batches)
-    scan_mask = np.squeeze(np.concatenate(mask_batches))
+def predict(seriesuid, model, dataset_gen, dataset_path, mask_type):
+    scan_mask = np.squeeze(model.predict_generator(
+        generator=dataset_gen,
+        use_multiprocessing=True,
+        workers=4,
+        max_queue_size=20,
+        verbose=0
+    ))
+
     with h5py.File(dataset_path, "r") as dataset:
         scan_mask = augmentation.crop_to_shape(scan_mask, dataset["lung_masks"][seriesuid].shape)
+        if seriesuid in dataset[mask_type]:
+            nodule_mask = dataset[mask_type][seriesuid].value > 0
+        else:
+            nodule_mask = np.zeros(scan_mask.shape, scan_mask.dtype)
+        lung_mask = dataset["lung_masks"][seriesuid].value > 0
+        nodule_mask *= lung_mask
+        scan_dice = np_dice_coef(scan_mask, nodule_mask)
     return scan_dice, scan_mask
 
 
@@ -54,10 +59,14 @@ def main():
     parser.add_argument('subset', type=int, help="subset for which you want evaluate the segmentation")
     parser.add_argument('csv_output', type=str, help="path where to store the detailed CSV output")
     parser.add_argument('--candidates', dest='csv_candidates', type=str, help="path where to store the candidates CSV output")
+    parser.add_argument('--mask-predictions', dest='mask_predictions', type=str,
+                        help="path where to store the predicted masks")
     parser.add_argument('--batch-size', dest='batch_size', type=int, default=5, action="store",
                         help="evaluation batch size")
     parser.add_argument('--no-normalization', dest='batch_normalization', action='store_false')
     parser.add_argument('--loss-binary-crossentropy', dest='loss_binary_crossentropy', action='store_true')
+    parser.add_argument('--laplacian', dest='use_laplacian', action='store_true')
+    parser.add_argument('--mask-type', dest='mask_type', default="nodule_masks_spherical", action='store_true')
     parser.add_argument('--ch3', dest='ch3', action='store_true')
     args = parser.parse_args()
 
@@ -102,11 +111,12 @@ def main():
             batch_size=args.batch_size,
             dataframe=df_view,
             epoch_frac=1.0,
-            epoch_shuffle=False
+            epoch_shuffle=False,
+            laplacian=args.use_laplacian,
         )
 
         # Predict mask
-        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset)
+        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset, args.mask_type)
 
         # Retrieve candidates
         with h5py.File(args.dataset, "r") as dataset:
@@ -120,10 +130,17 @@ def main():
         ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
         sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
+        # Save mask, if required
+        if args.mask_predictions:
+            dataset_filename = Path(args.mask_predictions)
+            mode = 'r+' if dataset_filename.exists() else 'w'
+            with h5py.File(dataset_filename, mode) as export_ds:
+                export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
+
         # Save metrics
         scan_metrics = {
             "seriesuid": seriesuid,
-            "dice": scan_dice.mean(),
+            "dice": scan_dice,
             "sensitivity": sensitivity,
             "FP": FP,
             "TP": TP,
