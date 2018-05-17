@@ -156,7 +156,7 @@ def main():
         pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (subset,)))
 
         metrics = "Weights: %s\nMetrics mean for subset%d:\n%s\n\nMetrics variance for subset%d:\n%s" % (
-            args.model_weights,
+            Path(args.model_weights).name,
             subset,
             repr(metrics_df.mean()),
             subset,
