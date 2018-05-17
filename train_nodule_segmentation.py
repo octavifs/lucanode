@@ -17,6 +17,8 @@ NETWORK_VARIATIONS = {
         detection.train_nodule_segmentation_augmentation_normalization_dice_3ch,
     "augmentation_normalization_dice_3ch_laplacian":
         detection.train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian,
+    "augmentation_normalization_bce_3ch_laplacian":
+        detection.train_nodule_segmentation_augmentation_normalization_bce_3ch_laplacian,
 }
 
 if __name__ == '__main__':
