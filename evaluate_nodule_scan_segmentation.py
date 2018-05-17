@@ -57,7 +57,7 @@ def main():
     parser.add_argument('csv_annotations', type=str, help="CSV with real annotations")
     parser.add_argument('model_weights', type=str, help="path where the model weights are stored")
     parser.add_argument('output', type=str, help="path where to store the detailed output")
-    parser.add_argument('subset', type=int, help="subset for which you want evaluate the segmentation")
+    parser.add_argument('subsets', type=int, nargs='+', help="subset for which you want evaluate the segmentation")
     parser.add_argument('--batch-size', dest='batch_size', type=int, default=5, action="store",
                         help="evaluation batch size")
     parser.add_argument('--no-normalization', dest='batch_normalization', action='store_false')
@@ -90,79 +90,80 @@ def main():
         model = UnetSansBN(*network_shape)
     model.load_weights(args.model_weights, by_name=True)
 
-    ann_df = pd.read_csv(args.csv_annotations)
-    candidates = []
+    for subset in args.subsets:
+        ann_df = pd.read_csv(args.csv_annotations)
+        candidates = []
 
-    with h5py.File(args.dataset, "r") as dataset:
-        df = loader.dataset_metadata_as_dataframe(dataset, key='ct_scans')
-    df = df[df.subset == args.subset]
-    scan_ids = set(df.seriesuid)
-    metrics = []
-    for seriesuid in tqdm(scan_ids, desc="eval scans"):
-        # Prepare data loader
-        df_view = df[df.seriesuid == seriesuid]
-        if args.ch3:
-            loader_class = loader.NoduleSegmentation3CHSequence
-        else:
-            loader_class = loader.NoduleSegmentationSequence
-        dataset_gen = loader_class(
-            args.dataset,
-            batch_size=args.batch_size,
-            dataframe=df_view,
-            epoch_frac=1.0,
-            epoch_shuffle=False,
-            laplacian=args.use_laplacian,
-        )
-
-        # Predict mask
-        scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset, args.mask_type)
-
-        # Retrieve candidates
         with h5py.File(args.dataset, "r") as dataset:
-            pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
-                                                                    dict(dataset["ct_scans"][seriesuid].attrs),
-                                                                    scan_mask)
-        candidates.append(pred_df)
+            df = loader.dataset_metadata_as_dataframe(dataset, key='ct_scans')
+        df = df[df.subset == subset]
+        scan_ids = set(df.seriesuid)
+        metrics = []
+        for seriesuid in tqdm(scan_ids, desc="eval scans"):
+            # Prepare data loader
+            df_view = df[df.seriesuid == seriesuid]
+            if args.ch3:
+                loader_class = loader.NoduleSegmentation3CHSequence
+            else:
+                loader_class = loader.NoduleSegmentationSequence
+            dataset_gen = loader_class(
+                args.dataset,
+                batch_size=args.batch_size,
+                dataframe=df_view,
+                epoch_frac=1.0,
+                epoch_shuffle=False,
+                laplacian=args.use_laplacian,
+            )
 
-        # Evaluate candidates
-        pred_df = pred_df.reset_index()
-        ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
-        sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
+            # Predict mask
+            scan_dice, scan_mask = predict(seriesuid, model, dataset_gen, args.dataset, args.mask_type)
 
-        # Save mask
-        dataset_filename = Path(args.output) / ("masks_subset%d.h5" % (args.subset, ))
-        mode = 'r+' if dataset_filename.exists() else 'w'
-        with h5py.File(dataset_filename, mode) as export_ds:
-            if seriesuid in export_ds.keys():
-                del export_ds[seriesuid]
-            export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
+            # Retrieve candidates
+            with h5py.File(args.dataset, "r") as dataset:
+                pred_df = nodule_candidates.retrieve_candidates_dataset(seriesuid,
+                                                                        dict(dataset["ct_scans"][seriesuid].attrs),
+                                                                        scan_mask)
+            candidates.append(pred_df)
 
-        # Save metrics
-        scan_metrics = {
-            "seriesuid": seriesuid,
-            "dice": scan_dice,
-            "sensitivity": sensitivity,
-            "FP": FP,
-            "TP": TP,
-            "P": P
-        }
-        metrics.append(scan_metrics)
+            # Evaluate candidates
+            pred_df = pred_df.reset_index()
+            ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
+            sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
-    # Export metrics
-    columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
-    metrics_df = pd.DataFrame(metrics, columns=columns)
-    metrics_df.to_csv(Path(args.output) / ("evaluation_subset%d.csv" % (args.subset,)))
-    pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (args.subset,)))
+            # Save mask
+            dataset_filename = Path(args.output) / ("masks_subset%d.h5" % (subset, ))
+            mode = 'r+' if dataset_filename.exists() else 'w'
+            with h5py.File(dataset_filename, mode) as export_ds:
+                if seriesuid in export_ds.keys():
+                    del export_ds[seriesuid]
+                export_ds.create_dataset(seriesuid, compression="gzip", data=(scan_mask > 0.5))
 
-    metrics = "Metrics mean for subset%d:\n%s\n\nMetrics variance for subset%d:\n%s" % (
-        args.subset,
-        repr(metrics_df.mean()),
-        args.subset,
-        repr(metrics_df.var())
-    )
-    with open(Path(args.output) / ("metrics_subset%d.txt" % (args.subset,)), "w") as fd:
-        fd.write(metrics)
-    print(metrics)
+            # Save metrics
+            scan_metrics = {
+                "seriesuid": seriesuid,
+                "dice": scan_dice,
+                "sensitivity": sensitivity,
+                "FP": FP,
+                "TP": TP,
+                "P": P
+            }
+            metrics.append(scan_metrics)
+
+        # Export metrics
+        columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
+        metrics_df = pd.DataFrame(metrics, columns=columns)
+        metrics_df.to_csv(Path(args.output) / ("evaluation_subset%d.csv" % (subset,)))
+        pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (subset,)))
+
+        metrics = "Metrics mean for subset%d:\n%s\n\nMetrics variance for subset%d:\n%s" % (
+            subset,
+            repr(metrics_df.mean()),
+            subset,
+            repr(metrics_df.var())
+        )
+        with open(Path(args.output) / ("metrics_subset%d.txt" % (subset,)), "w") as fd:
+            fd.write(metrics)
+        print(metrics)
 
 
 if __name__ == '__main__':
