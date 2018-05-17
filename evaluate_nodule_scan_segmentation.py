@@ -47,8 +47,9 @@ def evaluate_candidates(pred_df, ann_df_view):
     FP = len(pred_df) - TP
     P = len(ann_df_view)
     sensitivity = TP / P if P else np.nan
+    precision = TP / (TP + FP) if (TP + FP) else np.nan
 
-    return sensitivity, TP, FP, P
+    return sensitivity, precision, TP, FP, P
 
 
 def main():
@@ -128,7 +129,7 @@ def main():
             # Evaluate candidates
             pred_df = pred_df.reset_index()
             ann_df_view = ann_df[ann_df.seriesuid == seriesuid].reset_index()
-            sensitivity, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
+            sensitivity, precision, TP, FP, P = evaluate_candidates(pred_df, ann_df_view)
 
             # Save mask
             dataset_filename = Path(args.output) / ("masks_subset%d.h5" % (subset, ))
@@ -143,6 +144,7 @@ def main():
                 "seriesuid": seriesuid,
                 "dice": scan_dice,
                 "sensitivity": sensitivity,
+                "precision": precision,
                 "FP": FP,
                 "TP": TP,
                 "P": P
@@ -150,7 +152,7 @@ def main():
             metrics.append(scan_metrics)
 
         # Export metrics
-        columns=["seriesuid", "dice", "sensitivity", "FP", "TP", "P"]
+        columns=["seriesuid", "dice", "sensitivity", "precision", "FP", "TP", "P"]
         metrics_df = pd.DataFrame(metrics, columns=columns)
         metrics_df.to_csv(Path(args.output) / ("evaluation_subset%d.csv" % (subset,)))
         pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (subset,)))
