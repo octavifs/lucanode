@@ -46,7 +46,7 @@ def evaluate_candidates(pred_df, ann_df_view):
     TP = len(cross_df[cross_df.is_match])
     FP = len(pred_df) - TP
     P = len(ann_df_view)
-    sensitivity = TP / P if P else 0
+    sensitivity = TP / P if P else np.nan
 
     return sensitivity, TP, FP, P
 
