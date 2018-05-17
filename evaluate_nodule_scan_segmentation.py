@@ -154,8 +154,10 @@ def main():
     metrics_df.to_csv(Path(args.output) / ("evaluation_subset%d.csv" % (args.subset,)))
     pd.concat(candidates, ignore_index=True).to_csv(Path(args.output) / ("candidates_subset%d.csv" % (args.subset,)))
 
-    metrics = "Metrics mean for the subset: %s\n\nMetrics variance for the subset: %s" % (
+    metrics = "Metrics mean for subset%d:\n%s\n\nMetrics variance for subset%d:\n%s" % (
+        args.subset,
         repr(metrics_df.mean()),
+        args.subset,
         repr(metrics_df.var())
     )
     with open(Path(args.output) / ("metrics_subset%d.txt" % (args.subset,)), "w") as fd:
