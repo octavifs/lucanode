@@ -90,7 +90,7 @@ def main():
         model = UnetSansBN(*network_shape)
     model.load_weights(args.model_weights, by_name=True)
 
-    for subset in args.subsets:
+    for subset in tqdm(args.subsets, desc="eval subsets"):
         ann_df = pd.read_csv(args.csv_annotations)
         candidates = []
 
