@@ -383,12 +383,10 @@ class NoduleClassificationSequence(Sequence):
         self.df = dataframe
         self.batch_size = batch_size
         self.vol_gen = augmentation.VolumeDataGenerator(
-            vertical_flip=True,
             horizontal_flip=True,
-            width_shift_range=0.05,
-            height_shift_range=0.05,
             data_format="channels_last",
-            fill_mode="nearest",
+            fill_mode="constant",
+            cval=-4000
         )
         self.do_augmentation = do_augmentation
         self.cube_size = 32
