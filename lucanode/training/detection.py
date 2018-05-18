@@ -656,12 +656,14 @@ def train_fp_reduction_resnet(
         dataset_file,
         batch_size,
         dataframe=df_training,
+        do_augmentation=False
     )
     validation_loader = loader.NoduleClassificationSequence(
         dataset_file,
         batch_size,
         dataframe=df_validation,
         epoch_frac=1.0,
+        do_augmentation=False
     )
 
     # Callbacks
