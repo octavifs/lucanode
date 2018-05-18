@@ -402,7 +402,7 @@ class NoduleClassificationSequence(Sequence):
     def dataset(self):
         """lazy loading of the HDF5 dataset so that it can work well with multiprocessing when training the model"""
         if not self._dataset:
-            self._dataset = h5py.File(self._dataset_path, "r", driver='core')
+            self._dataset = h5py.File(self._dataset_path, "r")
         return self._dataset
 
     def __len__(self):
