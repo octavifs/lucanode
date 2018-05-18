@@ -374,3 +374,80 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
             lung_mask = self.dataset["lung_masks"][row.seriesuid][row.slice_idx, :, :] > 0
             nodule_mask *= lung_mask
             yield masked_scan, nodule_mask[:, :, np.newaxis]
+
+
+class NoduleClassificationSequence(Sequence):
+    def __init__(self, dataset_path, batch_size, dataframe, do_augmentation=True, epoch_frac=0.5):
+        self._dataset_path = dataset_path
+        self._dataset = None
+        self.df = dataframe
+        self.batch_size = batch_size
+        self.vol_gen = augmentation.VolumeDataGenerator(
+            rotation_range=90,
+            shear_range=0.2,
+            zoom_range=0.1,
+            vertical_flip=True,
+            horizontal_flip=True,
+            width_shift_range=0.05,
+            height_shift_range=0.05,
+            data_format="channels_last",
+            fill_mode="nearest",
+        )
+        self.do_augmentation = do_augmentation
+        self.cube_size = 32
+        self.epoch_frac = epoch_frac
+        self.epoch_df = self.df.sample(frac=self.epoch_frac)
+
+    @property
+    def dataset(self):
+        """lazy loading of the HDF5 dataset so that it can work well with multiprocessing when training the model"""
+        if not self._dataset:
+            self._dataset = h5py.File(self._dataset_path, "r")
+        return self._dataset
+
+    def __len__(self):
+        return ceil(len(self.epoch_df) / self.batch_size)
+
+    def on_epoch_end(self):
+        self.epoch_df = self.df.sample(frac=self.epoch_frac)
+
+    def _apply_augmentation(self, slices):
+        for cube, klass in slices:
+            if self.do_augmentation:
+                cube = self.vol_gen.random_transform(cube)
+            cube = augmentation.crop_to_shape(cube, (self.cube_size, self.cube_size, self.cube_size))
+            yield cube, klass
+
+    def _get_batch_metadata(self, idx):
+        idx_df_min = idx * self.batch_size
+        idx_df_max = (idx + 1) * self.batch_size
+        for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
+            yield r
+
+    def _get_slices(self, metadata):
+        for row in metadata:
+            world_coords = np.array([row.coordX, row.coordY, row.coordZ])
+            world_origin = np.array(self.dataset["ct_scans"][row.seriesuid].attrs["origin"])
+            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1]
+            # I'm getting cubes double the size I need so the AffineTransformation won't be lossy
+            z_min = vol_coords[0] - self.cube_size
+            z_max = vol_coords[0] + self.cube_size
+            y_min = vol_coords[1] - self.cube_size
+            y_max = vol_coords[1] + self.cube_size
+            x_min = vol_coords[2] - self.cube_size
+            x_max = vol_coords[2] + self.cube_size
+            cube = self.dataset["ct_scans"][row.seriesuid][z_min:z_max, y_min:y_max, x_min:x_max]
+            yield cube, row["class"]
+
+    def __getitem__(self, idx):
+        metadata_gen = self._get_batch_metadata(idx)
+        raw_slices_gen = self._get_slices(metadata_gen)
+        slices_gen = self._apply_augmentation(raw_slices_gen)
+        batch_x = []
+        batch_y = []
+        for cube, klass in slices_gen:
+            batch_x.append(cube)
+            batch_y.append(klass)
+        batch_x = np.array(batch_x)
+        batch_y = np.array(batch_y)
+        return batch_x, batch_y

@@ -8,6 +8,7 @@ import collections
 import numpy as np
 import pandas as pd
 from scipy.ndimage.interpolation import zoom
+from keras.preprocessing.image import ImageDataGenerator
 import cv2
 
 
@@ -270,3 +271,18 @@ def crop_to_shape(arr, shape, cval=0):
     crop_max = crop_min + shape
     slicer_obj = tuple(slice(idx_min, idx_max, 1) for idx_min, idx_max in zip(crop_min, crop_max))
     return output_arr[slicer_obj].copy()  # Return a copy of the view, so the rest of memory can be GC
+
+
+class VolumeDataGenerator(ImageDataGenerator):
+    def __init__(self, *args, **kwargs):
+        kwargs['data_format'] = 'channels_last'
+        super().__init__(*args, **kwargs)
+
+    def random_transform(self, x, seed=None):
+        """Apply transformation to the x volume. Assuming axis are [Z, Y, X]"""
+        x = np.moveaxis(x, 0, -1)  # volume axis are now [Y, X, Z]
+        x = super().random_transform(x)  # Apply transformation on axial plane
+        x = np.moveaxis(x, 0, -1)  # volume axis are now [X, Z, Y]
+        x = super().random_transform(x)  # Apply transformation on coronal plane
+        x = np.moveaxis(x, 0, -1)  # volume axis back to [Z, Y, X]
+        return x
