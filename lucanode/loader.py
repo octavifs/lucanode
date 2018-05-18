@@ -385,7 +385,6 @@ class NoduleClassificationSequence(Sequence):
         self.vol_gen = augmentation.VolumeDataGenerator(
             rotation_range=90,
             shear_range=0.2,
-            zoom_range=0.1,
             vertical_flip=True,
             horizontal_flip=True,
             width_shift_range=0.05,
@@ -428,15 +427,15 @@ class NoduleClassificationSequence(Sequence):
         for row in metadata:
             world_coords = np.array([row.coordX, row.coordY, row.coordZ])
             world_origin = np.array(self.dataset["ct_scans"][row.seriesuid].attrs["origin"])
-            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1] + self.cube_size
-            # I'm getting cubes double the size I need so the AffineTransformation won't be lossy
-            z_min = vol_coords[0] - self.cube_size
-            z_max = vol_coords[0] + self.cube_size
-            y_min = vol_coords[1] - self.cube_size
-            y_max = vol_coords[1] + self.cube_size
-            x_min = vol_coords[2] - self.cube_size
-            x_max = vol_coords[2] + self.cube_size
-            ct_scan_shape_aug = np.array(self.dataset["ct_scans"][row.seriesuid].shape) + self.cube_size
+            cube_side = self.cube_size * 3 // 4
+            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1] + cube_side
+            z_min = vol_coords[0] - cube_side
+            z_max = vol_coords[0] + cube_side
+            y_min = vol_coords[1] - cube_side
+            y_max = vol_coords[1] + cube_side
+            x_min = vol_coords[2] - cube_side
+            x_max = vol_coords[2] + cube_side
+            ct_scan_shape_aug = np.array(self.dataset["ct_scans"][row.seriesuid].shape) + cube_side
             ct_scan = augmentation.crop_to_shape(self.dataset["ct_scans"][row.seriesuid], ct_scan_shape_aug)
             cube = ct_scan[z_min:z_max, y_min:y_max, x_min:x_max]
             yield cube, row["class"]
