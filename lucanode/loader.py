@@ -402,7 +402,7 @@ class NoduleClassificationSequence(Sequence):
     def dataset(self):
         """lazy loading of the HDF5 dataset so that it can work well with multiprocessing when training the model"""
         if not self._dataset:
-            self._dataset = h5py.File(self._dataset_path, "r")
+            self._dataset = h5py.File(self._dataset_path, "r", driver='core')
         return self._dataset
 
     def __len__(self):
@@ -428,7 +428,7 @@ class NoduleClassificationSequence(Sequence):
         for row in metadata:
             world_coords = np.array([row.coordX, row.coordY, row.coordZ])
             world_origin = np.array(self.dataset["ct_scans"][row.seriesuid].attrs["origin"])
-            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1]
+            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1] + self.cube_size
             # I'm getting cubes double the size I need so the AffineTransformation won't be lossy
             z_min = vol_coords[0] - self.cube_size
             z_max = vol_coords[0] + self.cube_size
@@ -436,7 +436,9 @@ class NoduleClassificationSequence(Sequence):
             y_max = vol_coords[1] + self.cube_size
             x_min = vol_coords[2] - self.cube_size
             x_max = vol_coords[2] + self.cube_size
-            cube = self.dataset["ct_scans"][row.seriesuid][z_min:z_max, y_min:y_max, x_min:x_max]
+            ct_scan_shape_aug = np.array(self.dataset["ct_scans"][row.seriesuid].shape) + self.cube_size
+            ct_scan = augmentation.crop_to_shape(self.dataset["ct_scans"][row.seriesuid], ct_scan_shape_aug)
+            cube = ct_scan[z_min:z_max, y_min:y_max, x_min:x_max]
             yield cube, row["class"]
 
     def __getitem__(self, idx):
@@ -450,4 +452,4 @@ class NoduleClassificationSequence(Sequence):
             batch_y.append(klass)
         batch_x = np.array(batch_x)
         batch_y = np.array(batch_y)
-        return batch_x, batch_y
+        return batch_x[:, :, :, :, np.newaxis], batch_y

@@ -1,10 +1,13 @@
 from keras.callbacks import ModelCheckpoint
+from keras.optimizers import Adam
 import h5py
+import pandas as pd
 
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.metrics import dice_coef_loss
 from lucanode.models.unet import Unet, UnetSansBN
+from lucanode.models.resnet3d import Resnet3DBuilder
 from lucanode.callbacks import HistoryLog
 
 
@@ -624,6 +627,72 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
         validation_data=validation_loader,
         use_multiprocessing=True,
         workers=4,
+        max_queue_size=20,
+        shuffle=True,
+        callbacks=[model_checkpoint, history_log]
+    )
+
+
+def train_fp_reduction_resnet(
+        dataset_file,
+        candidates_file,
+        output_weights_file,
+        batch_size=64,
+        num_epochs=30,
+        last_epoch=0,
+        initial_weights=None,
+):
+    # Rebalance dataset to 2:1
+    df = pd.read_csv(candidates_file)
+    no_nodule_len = len(df[df["class"] == 0])
+    df = pd.concat([
+        df[df["class"] == 0],
+        df[df["class"] == 1].sample(n=no_nodule_len // 2, replace=True)
+    ], ignore_index=True)
+    df_training = df[df.subset.isin([0, 1, 2, 3, 4, 5, 6, 7])]
+    df_validation = df[df.subset.isin([8])]
+
+    training_loader = loader.NoduleClassificationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_training,
+    )
+    validation_loader = loader.NoduleClassificationSequence(
+        dataset_file,
+        batch_size,
+        dataframe=df_validation,
+        epoch_frac=1.0,
+    )
+
+    # Callbacks
+    model_checkpoint = ModelCheckpoint(
+        output_weights_file,
+        monitor='loss',
+        verbose=1,
+        save_best_only=True
+    )
+    history_log = HistoryLog(output_weights_file + ".history")
+
+    # Setup network
+    model = Resnet3DBuilder.build_resnet_50((32, 32, 32, 1), 1)
+    model.compile(
+        optimizer=Adam(lr=1e-3),
+        loss='binary_crossentropy',
+        metrics=['accuracy'],
+    )
+
+    if initial_weights:
+        model.load_weights(initial_weights)
+
+    # Train
+    model.fit_generator(
+        generator=training_loader,
+        epochs=num_epochs,
+        initial_epoch=last_epoch,
+        verbose=1,
+        validation_data=validation_loader,
+        use_multiprocessing=True,
+        workers=1,
         max_queue_size=20,
         shuffle=True,
         callbacks=[model_checkpoint, history_log]
