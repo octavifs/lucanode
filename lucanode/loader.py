@@ -384,7 +384,6 @@ class NoduleClassificationSequence(Sequence):
         self.batch_size = batch_size
         self.vol_gen = augmentation.VolumeDataGenerator(
             rotation_range=90,
-            shear_range=0.2,
             vertical_flip=True,
             horizontal_flip=True,
             width_shift_range=0.05,
