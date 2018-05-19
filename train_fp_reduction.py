@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('candidates_csv', type=str, help="path where the candidates csv is stored")
     parser.add_argument('weights_file_output', type=str, help="path where the network weights will be saved")
     parser.add_argument('variation', type=str, help="Name of the function", choices=NETWORK_VARIATIONS.keys())
-    parser.add_argument('--batch-size', dest='batch_size', type=int, default=5, action="store",
+    parser.add_argument('--batch-size', dest='batch_size', type=int, default=64, action="store",
                         help="Training batch size")
     parser.add_argument('--num-epochs', dest='num_epochs', type=int, default=5, action="store",
                         help="Number of training epochs")
