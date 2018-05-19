@@ -670,7 +670,7 @@ def train_fp_reduction_resnet(
     validation_loader = loader.NoduleClassificationSequence(
         batch_size,
         dataframe=df_validation,
-        do_augmentation=True
+        do_augmentation=False
     )
 
     # Callbacks
