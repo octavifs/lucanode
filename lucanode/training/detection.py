@@ -2,8 +2,11 @@ from keras.callbacks import ModelCheckpoint
 from keras.optimizers import Adam
 import h5py
 import pandas as pd
+import numpy as np
+from tqdm import tqdm
 
 from lucanode import loader
+from lucanode import augmentation
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.metrics import dice_coef_loss
 from lucanode.models.unet import Unet, UnetSansBN
@@ -642,8 +645,15 @@ def train_fp_reduction_resnet(
         last_epoch=0,
         initial_weights=None,
 ):
-    # Rebalance dataset to 2:1
     df = pd.read_csv(candidates_file)
+    df = df[~df.subset.isin([9])]
+    df = df[df.seriesuid.isin(
+        pd.Series(df.seriesuid.unique()).sample(frac=0.3)
+    )].sort_values("seriesuid")
+    with h5py.File(dataset_file, 'r') as dataset:
+        cubes = load_cubes(df, dataset)
+        df = pd.DataFrame({"cube": cubes, "class": df["class"].tolist(), "subset": df["subset"].tolist()})
+    # Rebalance dataset to 2:1
     no_nodule_len = len(df[df["class"] == 0])
     df = pd.concat([
         df[df["class"] == 0],
@@ -653,13 +663,11 @@ def train_fp_reduction_resnet(
     df_validation = df[df.subset.isin([8])]
 
     training_loader = loader.NoduleClassificationSequence(
-        dataset_file,
         batch_size,
         dataframe=df_training,
         do_augmentation=False
     )
     validation_loader = loader.NoduleClassificationSequence(
-        dataset_file,
         batch_size,
         dataframe=df_validation,
         epoch_frac=1.0,
@@ -699,3 +707,28 @@ def train_fp_reduction_resnet(
         shuffle=True,
         callbacks=[model_checkpoint, history_log]
     )
+
+
+def load_cubes(df, dataset, cube_size=32):
+    seriesuid = None
+    ct_scan = None
+    cubes = []
+    #cube_side = cube_size * 3 // 4
+    cube_side = 46
+    for _, row in tqdm(df.iterrows(), desc="Loading cubes into memory", total=len(df)):
+        if row.seriesuid != seriesuid:
+            seriesuid = row.seriesuid
+            ct_scan_shape_aug = np.array(dataset["ct_scans"][row.seriesuid].shape) + cube_side
+            ct_scan = augmentation.crop_to_shape(dataset["ct_scans"][row.seriesuid], ct_scan_shape_aug)
+        world_coords = np.array([row.coordX, row.coordY, row.coordZ])
+        world_origin = np.array(dataset["ct_scans"][row.seriesuid].attrs["origin"])
+        vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1] + cube_side
+        z_min = vol_coords[0] - cube_side
+        z_max = vol_coords[0] + cube_side
+        y_min = vol_coords[1] - cube_side
+        y_max = vol_coords[1] + cube_side
+        x_min = vol_coords[2] - cube_side
+        x_max = vol_coords[2] + cube_side
+        cube = ct_scan[z_min:z_max, y_min:y_max, x_min:x_max]
+        cubes.append(cube)
+    return cubes

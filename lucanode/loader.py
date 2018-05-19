@@ -377,14 +377,17 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
 
 
 class NoduleClassificationSequence(Sequence):
-    def __init__(self, dataset_path, batch_size, dataframe, do_augmentation=True, epoch_frac=0.5):
-        self._dataset_path = dataset_path
-        self._dataset = None
+    def __init__(self, batch_size, dataframe, do_augmentation=True, epoch_frac=0.5):
         self.df = dataframe
         self.batch_size = batch_size
         self.vol_gen = augmentation.VolumeDataGenerator(
+            rotation_range=90,
+            shear_range=0.2,
+            zoom_range=0.1,
+            vertical_flip=True,
             horizontal_flip=True,
-            data_format="channels_last",
+            width_shift_range=0.05,
+            height_shift_range=0.05,
             fill_mode="constant",
             cval=-4000
         )
@@ -392,13 +395,6 @@ class NoduleClassificationSequence(Sequence):
         self.cube_size = 32
         self.epoch_frac = epoch_frac
         self.epoch_df = self.df.sample(frac=self.epoch_frac)
-
-    @property
-    def dataset(self):
-        """lazy loading of the HDF5 dataset so that it can work well with multiprocessing when training the model"""
-        if not self._dataset:
-            self._dataset = h5py.File(self._dataset_path, "r")
-        return self._dataset
 
     def __len__(self):
         return ceil(len(self.epoch_df) / self.batch_size)
@@ -416,25 +412,11 @@ class NoduleClassificationSequence(Sequence):
     def _get_batch_metadata(self, idx):
         idx_df_min = idx * self.batch_size
         idx_df_max = (idx + 1) * self.batch_size
-        for _, r in self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows():
-            yield r
+        yield from self.epoch_df.iloc[idx_df_min:idx_df_max].iterrows()
 
     def _get_slices(self, metadata):
-        for row in metadata:
-            world_coords = np.array([row.coordX, row.coordY, row.coordZ])
-            world_origin = np.array(self.dataset["ct_scans"][row.seriesuid].attrs["origin"])
-            cube_side = self.cube_size * 3 // 4
-            vol_coords = np.round(world_coords - world_origin).astype(np.int)[::-1] + cube_side
-            z_min = vol_coords[0] - cube_side
-            z_max = vol_coords[0] + cube_side
-            y_min = vol_coords[1] - cube_side
-            y_max = vol_coords[1] + cube_side
-            x_min = vol_coords[2] - cube_side
-            x_max = vol_coords[2] + cube_side
-            ct_scan_shape_aug = np.array(self.dataset["ct_scans"][row.seriesuid].shape) + cube_side
-            ct_scan = augmentation.crop_to_shape(self.dataset["ct_scans"][row.seriesuid], ct_scan_shape_aug)
-            cube = ct_scan[z_min:z_max, y_min:y_max, x_min:x_max]
-            yield cube, row["class"]
+        for _, row in metadata:
+            yield row["cube"], row["class"]
 
     def __getitem__(self, idx):
         metadata_gen = self._get_batch_metadata(idx)
