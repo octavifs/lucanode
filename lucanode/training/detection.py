@@ -701,8 +701,8 @@ def train_fp_reduction_resnet(
         initial_epoch=last_epoch,
         verbose=1,
         validation_data=validation_loader,
-        use_multiprocessing=True,
-        workers=5,
+        use_multiprocessing=False,
+        workers=4,
         max_queue_size=20,
         shuffle=True,
         callbacks=[model_checkpoint, history_log]
