@@ -377,7 +377,7 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
 
 
 class NoduleClassificationSequence(Sequence):
-    def __init__(self, batch_size, dataframe, do_augmentation=True, epoch_frac=0.5):
+    def __init__(self, batch_size, dataframe, do_augmentation=True, epoch_frac=1.0):
         self.df = dataframe
         self.batch_size = batch_size
         self.vol_gen = augmentation.VolumeDataGenerator(
