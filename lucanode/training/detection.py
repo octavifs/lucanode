@@ -702,7 +702,7 @@ def train_fp_reduction_resnet(
         verbose=1,
         validation_data=validation_loader,
         use_multiprocessing=False,
-        workers=4,
+        workers=8,
         max_queue_size=20,
         shuffle=True,
         callbacks=[model_checkpoint, history_log]
