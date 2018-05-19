@@ -648,7 +648,7 @@ def train_fp_reduction_resnet(
     df = pd.read_csv(candidates_file)
     df = df[~df.subset.isin([9])]
     df = df[df.seriesuid.isin(
-        pd.Series(df.seriesuid.unique()).sample(frac=0.34)
+        pd.Series(df.seriesuid.unique()).sample(frac=0.4)
     )].sort_values("seriesuid")
     with h5py.File(dataset_file, 'r') as dataset:
         cubes = load_cubes(df, dataset)
