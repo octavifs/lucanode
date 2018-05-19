@@ -1,5 +1,4 @@
-import pickle
-
+import pandas as pd
 from keras.callbacks import History
 
 
@@ -11,5 +10,4 @@ class HistoryLog(History):
 
     def on_epoch_end(self, epoch, logs=None):
         super().on_epoch_end(epoch, logs)
-        with open(self.logfile, "wb") as fd:
-            pickle.dump(self.history, fd)
+        pd.DataFrame(self.history).to_csv(self.logfile)
