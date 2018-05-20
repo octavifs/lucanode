@@ -397,7 +397,7 @@ class NoduleClassificationSequence(Sequence):
         self.epoch_df = self.df.sample(frac=self.epoch_frac)
 
     def __len__(self):
-        return ceil(len(self.epoch_df) / self.batch_size)
+        return len(self.epoch_df) // self.batch_size
 
     def on_epoch_end(self):
         self.epoch_df = self.df.sample(frac=self.epoch_frac)
