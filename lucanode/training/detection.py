@@ -1,4 +1,4 @@
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.optimizers import Adam
 import h5py
 import pandas as pd
@@ -80,9 +80,13 @@ def train_lung_segmentation(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -104,7 +108,7 @@ def train_lung_segmentation(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -142,9 +146,13 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -166,7 +174,7 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -204,9 +212,13 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -228,7 +240,7 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -266,9 +278,13 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -290,7 +306,7 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -334,9 +350,13 @@ def train_nodule_segmentation_augmentation_normalization_bce(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -358,7 +378,7 @@ def train_nodule_segmentation_augmentation_normalization_bce(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -402,9 +422,13 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -426,7 +450,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -471,9 +495,13 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -495,7 +523,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -540,9 +568,13 @@ def train_nodule_segmentation_augmentation_normalization_bce_3ch_laplacian(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -564,7 +596,7 @@ def train_nodule_segmentation_augmentation_normalization_bce_3ch_laplacian(
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -608,9 +640,13 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -632,7 +668,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
         workers=4,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
@@ -676,9 +712,13 @@ def train_fp_reduction_resnet(
     # Callbacks
     model_checkpoint = ModelCheckpoint(
         output_weights_file,
-        monitor='loss',
+        monitor='val_loss',
         verbose=1,
         save_best_only=True
+    )
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        patience=5
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -704,7 +744,7 @@ def train_fp_reduction_resnet(
         workers=8,
         max_queue_size=20,
         shuffle=True,
-        callbacks=[model_checkpoint, history_log]
+        callbacks=[model_checkpoint, early_stopping, history_log]
     )
 
 
