@@ -182,7 +182,7 @@ def evaluate_fp_reduction_resnet(
     df_candidates = pd.read_csv(candidates_file)
     with h5py.File(dataset_file, 'r') as dataset:
         cubes = preprocessing.load_cubes(df_candidates, dataset)
-        df = pd.DataFrame({"cube": cubes, "class": [None]*len(df)})
+        df = pd.DataFrame({"cube": cubes, "class": [None]*len(df_candidates)})
 
     evaluation_loader = loader.NoduleClassificationSequence(
         batch_size,
