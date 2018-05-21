@@ -377,7 +377,7 @@ class NoduleSegmentation3CHSequence(LungSegmentationSequence):
 
 
 class NoduleClassificationSequence(Sequence):
-    def __init__(self, batch_size, dataframe, do_augmentation=True, epoch_frac=1.0):
+    def __init__(self, batch_size, dataframe, do_augmentation=True, epoch_frac=1.0, shuffle=True):
         self.df = dataframe
         self.batch_size = batch_size
         self.vol_gen = augmentation.VolumeDataGenerator(
@@ -394,7 +394,10 @@ class NoduleClassificationSequence(Sequence):
         self.do_augmentation = do_augmentation
         self.cube_size = 32
         self.epoch_frac = epoch_frac
-        self.epoch_df = self.df.sample(frac=self.epoch_frac)
+        if shuffle:
+            self.epoch_df = self.df.sample(frac=self.epoch_frac)
+        else:
+            self.epoch_df = self.df
 
     def __len__(self):
         return ceil(len(self.epoch_df) / self.batch_size)
