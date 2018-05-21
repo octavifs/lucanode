@@ -10,10 +10,13 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 from skimage import measure
 import pandas as pd
+import h5py
 
+from lucanode import preprocessing
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet
+from lucanode.models.resnet3d import Resnet3DBuilder
 
 
 def evaluate_generator(
@@ -167,3 +170,40 @@ def draw_nodule_contour(ax, nodule_mask, color):
     contours = measure.find_contours(nodule_mask, 0.8)
     for n, contour in enumerate(contours):
         ax.plot(contour[:, 1], contour[:, 0], linewidth=1, color=color, alpha=0.8)
+
+
+def evaluate_fp_reduction_resnet(
+        dataset_file,
+        output_weights_file,
+        candidates_file,
+        probabilities_file,
+        batch_size=64,
+):
+    df_candidates = pd.read_csv(candidates_file)
+    with h5py.File(dataset_file, 'r') as dataset:
+        cubes = preprocessing.load_cubes(df_candidates, dataset)
+        df = pd.DataFrame({"cube": cubes, "class": [None]*len(df)})
+
+    evaluation_loader = loader.NoduleClassificationSequence(
+        batch_size,
+        dataframe=df,
+        do_augmentation=False,
+        shuffle=False
+    )
+
+    # Setup network
+    model = Resnet3DBuilder.build_resnet_50((32, 32, 32, 1), 1)
+    model.load_weights(output_weights_file)
+
+    # Predict
+    predictions = model.predict_generator(
+        generator=evaluation_loader,
+        verbose=1,
+        use_multiprocessing=False,
+        workers=8,
+        max_queue_size=20,
+    )
+
+    # Store predictions
+    df_candidates["probability"] = predictions.ravel()
+    df_candidates.to_csv(probabilities_file)
