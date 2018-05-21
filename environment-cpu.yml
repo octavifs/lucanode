@@ -25,3 +25,4 @@ dependencies:
 - scikit-learn=0.19.1
 - h5py=2.7.1
 - seaborn=0.8.1
+- pandas_ml=0.5.0
