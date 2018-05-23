@@ -748,8 +748,16 @@ def train_fp_reduction_resnet(
     )
 
 
+def train_fp_reduction_resnet_34(*args, **kwargs):
+    return train_fp_reduction_resnet(Resnet3DBuilder.build_resnet_34, *args, **kwargs)
+
+
 def train_fp_reduction_resnet_50(*args, **kwargs):
     return train_fp_reduction_resnet(Resnet3DBuilder.build_resnet_50, *args, **kwargs)
+
+
+def train_fp_reduction_resnet_101(*args, **kwargs):
+    return train_fp_reduction_resnet(Resnet3DBuilder.build_resnet_101, *args, **kwargs)
 
 
 def train_fp_reduction_resnet_152(*args, **kwargs):

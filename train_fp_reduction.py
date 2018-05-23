@@ -3,7 +3,9 @@ import argparse
 from lucanode.training import detection
 
 NETWORK_VARIATIONS = {
+    "resnet_34": detection.train_fp_reduction_resnet_34,
     "resnet_50": detection.train_fp_reduction_resnet_50,
+    "resnet_101": detection.train_fp_reduction_resnet_101,
     "resnet_152": detection.train_fp_reduction_resnet_152
 }
 
