@@ -84,7 +84,7 @@ def train_lung_segmentation(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -150,7 +150,7 @@ def train_nodule_segmentation_no_augmentation_no_normalization_binary_crossentro
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -216,7 +216,7 @@ def train_nodule_segmentation_no_augmentation_normalization_binary_crossentropy(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -282,7 +282,7 @@ def train_nodule_segmentation_no_augmentation_normalization_dice(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -354,7 +354,7 @@ def train_nodule_segmentation_augmentation_normalization_bce(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -426,7 +426,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -499,7 +499,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -572,7 +572,7 @@ def train_nodule_segmentation_augmentation_normalization_bce_3ch_laplacian(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -644,7 +644,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
@@ -717,7 +717,7 @@ def train_fp_reduction_resnet(
     )
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=5
+        patience=10
     )
     history_log = HistoryLog(output_weights_file + ".history")
 
