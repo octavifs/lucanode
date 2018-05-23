@@ -671,6 +671,7 @@ def train_nodule_segmentation_augmentation_normalization_dice_3ch_laplacian_misl
 
 
 def train_fp_reduction_resnet(
+        model_builder,
         dataset_file,
         candidates_file,
         output_weights_file,
@@ -721,7 +722,8 @@ def train_fp_reduction_resnet(
     history_log = HistoryLog(output_weights_file + ".history")
 
     # Setup network
-    model = Resnet3DBuilder.build_resnet_50((32, 32, 32, 1), 1)
+
+    model = model_builder((32, 32, 32, 1), 1)
     model.compile(
         optimizer=Adam(lr=1e-3),
         loss='binary_crossentropy',
@@ -744,3 +746,11 @@ def train_fp_reduction_resnet(
         shuffle=True,
         callbacks=[model_checkpoint, early_stopping, history_log]
     )
+
+
+def train_fp_reduction_resnet_50(*args, **kwargs):
+    return train_fp_reduction_resnet(Resnet3DBuilder.build_resnet_50, *args, **kwargs)
+
+
+def train_fp_reduction_resnet_152(*args, **kwargs):
+    return train_fp_reduction_resnet(Resnet3DBuilder.build_resnet_152, *args, **kwargs)
