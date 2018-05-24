@@ -16,7 +16,6 @@ from lucanode import preprocessing
 from lucanode import loader
 from lucanode.training import split_dataset, DEFAULT_UNET_SIZE
 from lucanode.models.unet import Unet
-from lucanode.models.resnet3d import Resnet3DBuilder
 
 
 def evaluate_generator(
@@ -173,6 +172,7 @@ def draw_nodule_contour(ax, nodule_mask, color):
 
 
 def evaluate_fp_reduction_resnet(
+        resnet_builder,
         dataset_file,
         output_weights_file,
         candidates_file,
@@ -192,7 +192,7 @@ def evaluate_fp_reduction_resnet(
     )
 
     # Setup network
-    model = Resnet3DBuilder.build_resnet_50((32, 32, 32, 1), 1)
+    model = resnet_builder((32, 32, 32, 1), 1)
     model.load_weights(output_weights_file)
 
     # Predict

@@ -1,9 +1,14 @@
 # Launch training for lung segmentation
 import argparse
 from lucanode.training import evaluation
+from lucanode.models.resnet3d import Resnet3DBuilder
 
 NETWORK_VARIATIONS = {
-    "resnet_50": evaluation.evaluate_fp_reduction_resnet
+    "resnet_18": Resnet3DBuilder.build_resnet_18,
+    "resnet_34": Resnet3DBuilder.build_resnet_34,
+    "resnet_50": Resnet3DBuilder.build_resnet_50,
+    "resnet_101": Resnet3DBuilder.build_resnet_101,
+    "resnet_152": Resnet3DBuilder.build_resnet_152,
 }
 
 if __name__ == '__main__':
@@ -18,7 +23,8 @@ if __name__ == '__main__':
                         help="Training batch size")
     args = parser.parse_args()
 
-    NETWORK_VARIATIONS[args.variation](
+    evaluation.evaluate_fp_reduction_resnet(
+        NETWORK_VARIATIONS[args.variation],
         args.dataset_hdf5,
         args.weights_file,
         args.candidates_csv,
