@@ -1,0 +1,1666 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"co",
+				"command_issued"
+			],
+			[
+				"perce",
+				"percent_position"
+			],
+			[
+				"angle",
+				"angle_percentage"
+			],
+			[
+				"num",
+				"num_cols"
+			],
+			[
+				"conv",
+				"conv10"
+			],
+			[
+				"out",
+				"output_vector"
+			],
+			[
+				"num_",
+				"num_rows"
+			],
+			[
+				"imgs",
+				"imgs_mask_train"
+			],
+			[
+				"class",
+				"class_weights"
+			],
+			[
+				"nod",
+				"nodule_mask_img"
+			],
+			[
+				"lung",
+				"lung_mask_img"
+			],
+			[
+				"img_",
+				"img_filter"
+			],
+			[
+				"img_fil",
+				"img_filters"
+			],
+			[
+				"TMUX",
+				"TMUX_URL"
+			],
+			[
+				"if",
+				"ifmain\tif __name__ == '__main__'"
+			],
+			[
+				"repo",
+				"response"
+			],
+			[
+				"pro",
+				"proxies"
+			],
+			[
+				"jou",
+				"journal"
+			],
+			[
+				"jour",
+				"journal_ds_filename"
+			],
+			[
+				"jo",
+				"journal_ds_file"
+			],
+			[
+				"cook",
+				"cookie_handler"
+			],
+			[
+				"que",
+				"querier"
+			],
+			[
+				"ga",
+				"gamma"
+			],
+			[
+				"calcu",
+				"calculate_svm_error"
+			],
+			[
+				"svm",
+				"svm_error"
+			],
+			[
+				"gamma",
+				"gamma_array"
+			],
+			[
+				"X_",
+				"X_test"
+			],
+			[
+				"anno",
+				"annotation"
+			],
+			[
+				"a",
+				"annotation"
+			],
+			[
+				"c",
+				"ct_scan_files"
+			],
+			[
+				"ct",
+				"ct_scan_pattern"
+			],
+			[
+				"ib",
+				"ibt_c"
+			],
+			[
+				"ibt",
+				"ibt_r"
+			],
+			[
+				"is",
+				"is_below_threshold"
+			],
+			[
+				"blo",
+				"blocks_mse"
+			],
+			[
+				"bl",
+				"blocks_mse"
+			],
+			[
+				"r",
+				"r_blocks"
+			],
+			[
+				"l",
+				"l_d"
+			],
+			[
+				"d",
+				"d_blocks"
+			],
+			[
+				"ini",
+				"initial_r_power"
+			],
+			[
+				"r_",
+				"r_blocks"
+			],
+			[
+				"initial_r",
+				"initial_r_power"
+			],
+			[
+				"DIFF",
+				"DIFF_R_D_POWER"
+			],
+			[
+				"MIN",
+				"MIN_D_POWER"
+			],
+			[
+				"short",
+				"short_side_power"
+			],
+			[
+				"resca",
+				"rescale_pixels"
+			],
+			[
+				"pi",
+				"pixel_range"
+			],
+			[
+				"min",
+				"min_decoded_pixel"
+			],
+			[
+				"max",
+				"max_decoded_pixel"
+			],
+			[
+				"deco",
+				"decoded_image"
+			],
+			[
+				"assert",
+				"assert_almost_equal"
+			],
+			[
+				"as",
+				"astype"
+			],
+			[
+				"fi",
+				"fi_from_file"
+			],
+			[
+				"load",
+				"load_fractal_image"
+			],
+			[
+				"affine",
+				"affine_transformation"
+			],
+			[
+				"attr",
+				"attractor"
+			],
+			[
+				"att",
+				"attractors"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"file",
+				"filename"
+			],
+			[
+				"nu",
+				"num_attractors"
+			],
+			[
+				"tra",
+				"transformed_coordinates"
+			],
+			[
+				"img",
+				"img_matrix"
+			],
+			[
+				"attra",
+				"attractor_transformations"
+			],
+			[
+				"di",
+				"diff"
+			],
+			[
+				"trans",
+				"transformed_image"
+			],
+			[
+				"rein",
+				"reindexed_y"
+			],
+			[
+				"re",
+				"reindexed_x"
+			],
+			[
+				"bins_",
+				"bins_y"
+			],
+			[
+				"image",
+				"image_array"
+			],
+			[
+				"ima",
+				"image_matrix"
+			],
+			[
+				"next",
+				"next_y"
+			],
+			[
+				"Shi",
+				"ShittyAntSimulation"
+			],
+			[
+				"An",
+				"Ant"
+			],
+			[
+				"soil",
+				"soil_patch"
+			],
+			[
+				"soi",
+				"soil_patch"
+			],
+			[
+				"initia",
+				"initial_ants"
+			],
+			[
+				"A",
+				"Agent"
+			],
+			[
+				"tot",
+				"total_no_side"
+			],
+			[
+				"total",
+				"total_no_drink"
+			],
+			[
+				"tota",
+				"total_no_drink"
+			],
+			[
+				"to",
+				"total_no_side"
+			],
+			[
+				"de",
+				"delivery_fee"
+			],
+			[
+				"del",
+				"delivery_tip"
+			],
+			[
+				"deli",
+				"delivery_fee"
+			],
+			[
+				"res",
+				"restaurant"
+			],
+			[
+				"resta",
+				"restaurant"
+			],
+			[
+				"date",
+				"date"
+			],
+			[
+				"Chi",
+				"Chicken"
+			],
+			[
+				"cha",
+				"char2"
+			],
+			[
+				"char",
+				"char1"
+			],
+			[
+				"spe",
+				"speaker_ids"
+			],
+			[
+				"paper",
+				"paper_urls"
+			],
+			[
+				"pape",
+				"paper_urls"
+			],
+			[
+				"url",
+				"urlparse"
+			],
+			[
+				"sna",
+				"snapshotArtifact"
+			],
+			[
+				"fet",
+				"fetch_url_fn"
+			],
+			[
+				"pa",
+				"patch"
+			],
+			[
+				"params",
+				"params"
+			],
+			[
+				"nonu",
+				"nonunique_snapshots"
+			],
+			[
+				"base",
+				"base"
+			],
+			[
+				"con",
+				"content"
+			],
+			[
+				"from",
+				"from_hash"
+			],
+			[
+				"since",
+				"since_hash"
+			],
+			[
+				"conte",
+				"content"
+			],
+			[
+				"content",
+				"content_hash"
+			],
+			[
+				"get",
+				"get_latest"
+			],
+			[
+				"diff",
+				"unified_diff"
+			],
+			[
+				"cu",
+				"cursor"
+			],
+			[
+				"db_",
+				"db_path"
+			],
+			[
+				"pap",
+				"papers_parsed"
+			],
+			[
+				"au",
+				"author"
+			],
+			[
+				"Fu",
+				"Fuck1"
+			],
+			[
+				"FU",
+				"Fuck"
+			],
+			[
+				"top",
+				"top_unordered_stack"
+			],
+			[
+				"new",
+				"new_small"
+			],
+			[
+				"flo",
+				"floated_min"
+			],
+			[
+				"sta",
+				"stack_min"
+			],
+			[
+				"new_",
+				"new_min"
+			],
+			[
+				"stac",
+				"stack_min"
+			],
+			[
+				"result",
+				"result_string"
+			],
+			[
+				"found",
+				"found_combinations"
+			],
+			[
+				"cur",
+				"current_path"
+			],
+			[
+				"find",
+				"find_sum"
+			],
+			[
+				"None",
+				"None"
+			],
+			[
+				"app",
+				"append"
+			],
+			[
+				"root",
+				"root_b"
+			],
+			[
+				"rot",
+				"root_a"
+			],
+			[
+				"ro",
+				"root_a"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 59.0,
+		"last_filter": "python",
+		"selected_items":
+		[
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"pytho",
+				"Set Syntax: Python"
+			],
+			[
+				"matlab",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"octa",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"mark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"py",
+				"Set Syntax: Python"
+			],
+			[
+				"syntax",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"pyth",
+				"Set Syntax: Python"
+			],
+			[
+				"lowe",
+				"Convert Case: Lower Case"
+			],
+			[
+				"lo",
+				"Convert Case: Lower Case"
+			],
+			[
+				"lower",
+				"Convert Case: Lower Case"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"spac",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"yaml",
+				"Set Syntax: YAML"
+			],
+			[
+				"WRAP",
+				"Word Wrap: Toggle"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
+			[
+				"java",
+				"Set Syntax: Java"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"wrap",
+				"Word Wrap: Toggle"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"setsymark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"markdown",
+				"Set Syntax: Markdown Extended"
+			],
+			[
+				"markd",
+				"Set Syntax: Markdown"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"wordc",
+				"LaTeXWordCount: Word Count"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"virtual",
+				"Virtualenv: Activate"
+			],
+			[
+				"ython",
+				"Set Syntax: Python"
+			],
+			[
+				"text",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"markdo",
+				"Set Syntax: Markdown"
+			],
+			[
+				"mat",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"ma",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"matla",
+				"Set Syntax: MATLAB"
+			],
+			[
+				"space",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"stat",
+				"Git: Status"
+			],
+			[
+				"virt",
+				"Virtualenv: Activate"
+			],
+			[
+				"pull",
+				"Git: Pull"
+			],
+			[
+				"sta",
+				"Git: Status"
+			],
+			[
+				"gitsta",
+				"Git: Status"
+			],
+			[
+				"json",
+				"Set Syntax: JSON"
+			],
+			[
+				"spaces",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"rein",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"reinde",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"pip",
+				"Package Control: Install Package"
+			],
+			[
+				"Pyth",
+				"Set Syntax: Python"
+			],
+			[
+				"javasc",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"tab",
+				"View: Toggle Tabs"
+			],
+			[
+				"pyt",
+				"Set Syntax: Python"
+			],
+			[
+				"select",
+				"HTML: Wrap Selection With Tag"
+			],
+			[
+				"status",
+				"Git: Status"
+			],
+			[
+				"log",
+				"Git: Log"
+			],
+			[
+				"diff",
+				"Git: Diff Current File"
+			],
+			[
+				"statu",
+				"Git: Status"
+			],
+			[
+				"stats",
+				"Git: Status"
+			],
+			[
+				"syntac",
+				"Set Syntax: C"
+			],
+			[
+				"inde",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"tog",
+				"Toggle Comment"
+			],
+			[
+				"toggle",
+				"Toggle Comment"
+			],
+			[
+				"comm",
+				"Toggle Comment"
+			],
+			[
+				"previ",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"preview",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"prev",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"impo",
+				"GoSublime: Go to imports section"
+			],
+			[
+				"im",
+				"GoImports"
+			],
+			[
+				"import",
+				"GoImports"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"gosublerr",
+				"GoSublime: Show errors"
+			],
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"di",
+				"Git: Diff"
+			],
+			[
+				"test",
+				"Build With: Arduino test build"
+			],
+			[
+				"bui",
+				"Build With: Arduino target build"
+			],
+			[
+				"testb",
+				"Build With: Arduino test build"
+			],
+			[
+				"tar",
+				"Build With: Arduino target build"
+			],
+			[
+				"build",
+				"Build With: Arduino tests"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 492.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/octavi/lucanode/thesis"
+	],
+	"file_history":
+	[
+		"/Users/octavi/Desktop/thesis.md",
+		"/Volumes/DATASETS/LUNA/CSVFILES/candidates_V2.csv",
+		"/Users/octavi/Desktop/experiments.txt",
+		"/Users/octavi/Desktop/cluster.sh",
+		"/Users/octavi/Downloads/LIDC-XML-only/tcia-lidc-xml/188/002.xml",
+		"/Users/octavi/account_stats.json",
+		"/Users/octavi/.bash_profile",
+		"/Users/octavi/Dropbox/CBEM/Advanced Biosignal Analysis/final_lab/paper/paper.md",
+		"/Users/octavi/Downloads/LIDC-XML-only/161-resubmitted-correction-3-9-12.xml",
+		"/Users/octavi/Desktop/training.sh",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/scan_perf_report.sh",
+		"/Users/octavi/Desktop/training_cluster.sh",
+		"/Users/octavi/Downloads/evaluationScript/exampleFiles/submission/sampleSubmission.csv",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/servos.py",
+		"/Users/octavi/Desktop/lab3Ralph(1).py",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/manual_controller.py",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/xbox.py",
+		"/Users/octavi/.ssh/known_hosts",
+		"/Users/octavi/Desktop/WORK.md",
+		"/Users/octavi/Dropbox/CBEM/Advanced Biosignal Analysis/surrogates.py",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/.gitignore",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/links.py",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/README.md",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/frames.py",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/requirements.txt",
+		"/Users/octavi/Dropbox/CBEM/Computational Therapies/simbiorob/MeArm.py",
+		"/Users/octavi/Downloads/surface3d_demo3.py",
+		"/Users/octavi/Downloads/surface3d_demo.py",
+		"/Users/octavi/freelance/draft-js/examples/draft-0-10-0/convertFromHTML/convert.html",
+		"/Users/octavi/freelance/getting-started-with-draft-js-plugins/package.json",
+		"/Users/octavi/Desktop/magic.md",
+		"/Users/octavi/freelance/draft-editor/src/bundle.min.js",
+		"/Users/octavi/freelance/draft-editor/src/bundle.js",
+		"/Users/octavi/freelance/draft-editor/src/ls",
+		"/Users/octavi/freelance/draft-editor/public/index.html",
+		"/Users/octavi/freelance/draft-editor/src/App.js",
+		"/Users/octavi/freelance/draft-editor/src/index.js",
+		"/Users/octavi/Downloads/display_unet_results/display_unet_results.md",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/lucanode/training/detection.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/lucanode/models/unet.py",
+		"/Users/octavi/freelance/newsbot_credentials.txt",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/lucanode/preprocessing/image_filters.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/lucanode/loader.py",
+		"/Users/octavi/Desktop/svg.html",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/lucanode/loader.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/lucanode/training/detection.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/lucanode/models/unet.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/train.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/lucanode/preprocessing/image_filters.py",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/Dockerfile",
+		"/Users/octavi/projects/fast_ai_c1/l1/Dockerfile",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/docker/run_gcloud.sh",
+		"/Users/octavi/Dropbox/CBEM/thesis/lung_cancer_nodule_detection/.jupyter/jupyter_notebook_config.json",
+		"/Users/octavi/Desktop/progress_report.md",
+		"/Users/octavi/projects/blog/bin/deploy",
+		"/Users/octavi/projects/fast_ai_c1/l1/utils.py",
+		"/Users/octavi/projects/fast_ai_c1/l1/vgg16.py",
+		"/Users/octavi/projects/fast_ai_c1/l1/environment-cpu.yml",
+		"/Users/octavi/projects/fast_ai_c1/l1/environment.yml",
+		"/Users/octavi/projects/fast_ai_c1/l1/package-list.txt",
+		"/Users/octavi/projects/fast_ai_c1/l1/spec-file.txt",
+		"/Users/octavi/projects/fast_ai_c1/l1/vgg16bn.py",
+		"/Users/octavi/Desktop/deures.md",
+		"/Users/octavi/Desktop/news.tex",
+		"/Users/octavi/Desktop/news.md",
+		"/Users/octavi/Downloads/test.tex",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/fractal-image-compression/README.md",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/thesis_proposal/paper.md",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/thesis_proposal/paper.bib",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/thesis_proposal/README.md",
+		"/Users/octavi/projects/SimpleElastix/Dockerfile",
+		"/Users/octavi/.virtualenvs/newsbot3/bin/postactivate",
+		"/Users/octavi/.virtualenvs/newsbot3/bin/postdeactivate",
+		"/Users/octavi/Desktop/blog thing.md",
+		"/Users/octavi/projects/aiogitblog/server.py",
+		"/Users/octavi/Downloads/bootstrap-4.0.0-beta.2/docs/4.0/examples/blog/blog.css",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/peer_review.md",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/journal_of_sex_research.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/journal_of_experimental_social_psychology_2.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/scholar.py",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset/journal_of_economic_literature.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset/journal_of_the_american_mathematical_society.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset/annals_of_mathematics.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset_base_stats.txt",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset_final.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/urls.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/method.txt",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/methods.md",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/dataset.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/journal_of_experimental_social_psychology.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/international_social_science_journal.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/nature.csv",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/nature_reviews_cancer_2012-2016.csv",
+		"/Users/octavi/Desktop/correos.txt",
+		"/Users/octavi/Downloads/arxiv_data.csv",
+		"/Users/octavi/Dropbox/CBEM/Data Science/P3_regression/parkinsons.names",
+		"/Users/octavi/Dropbox/CBEM/Data Science/P3_regression/parkinsons.data.csv",
+		"/Volumes/MD/CBEM/LUNA/CSVFILES/annotations.csv",
+		"/Users/octavi/Dropbox/CBEM/thesis/view_nodule_slices.py",
+		"/Volumes/MD/CBEM/LUNA/CSVFILES/candidates.csv",
+		"/Users/octavi/projects/ml/machine-learning-ex7/ex7/projectData.m",
+		"/Users/octavi/Dropbox/CBEM/Data Science/P2_unsupervised_learning/data/chronic_kidney_disease_ad.csv",
+		"/Users/octavi/Dropbox/CBEM/Data Science/P2_unsupervised_learning/data/chronic_kidney_disease_ad.info.txt",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/binary_format.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/context.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/__init__.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/__init__.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/decoding.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_decoding.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_binary_format.py",
+		"/Users/octavi/Dropbox/CBEM/Research Methodologies/form_research_fraud.md",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_fractal_image_save_and_load.frac",
+		"/usr/local/bin/pygmentize",
+		"/usr/local/bin/pip",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/evaluation.py",
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/README.md",
+		"/Users/octavi/Documents/CMTP/fakku/resources.txt",
+		"/Users/octavi/projects/CBEM/data_password.txt",
+		"/Users/octavi/Desktop/wifi_keys.txt",
+		"/Users/octavi/projects/deliveroo/receipt_2017-07-24.html",
+		"/Users/octavi/Desktop/puta_merda_carta.md",
+		"/Users/octavi/projects/tensorflow/tensorflow/python/training/monitored_session_test.py",
+		"/Users/octavi/projects/deliveroo/deliveroo.yaml",
+		"/Users/octavi/Desktop/UPF/statement_of_purpose_upf.md",
+		"/Users/octavi/projects/deliveroo/receipt.htm",
+		"/Users/octavi/projects/deliveroo/receipt copy.htm",
+		"/Users/octavi/Desktop/resignation.md",
+		"/Users/octavi/Desktop/statement_of_purpose_zurich.md"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 38.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 126.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "TFM",
+	"project": "TFM.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"exper",
+				"~/Desktop/experiments.txt"
+			],
+			[
+				"experi",
+				"# Run experiment for the following networks"
+			],
+			[
+				"ser",
+				"servos.py"
+			],
+			[
+				"gitig",
+				".gitignore"
+			],
+			[
+				"li",
+				"links.py"
+			],
+			[
+				"readm",
+				"README.md"
+			],
+			[
+				"mearm",
+				"MeArm.py"
+			],
+			[
+				"rr",
+				"requirements.txt"
+			],
+			[
+				"frame",
+				"frames.py"
+			],
+			[
+				"package",
+				"package.json"
+			],
+			[
+				"index",
+				"public/index.html"
+			],
+			[
+				"appjs",
+				"src/App.js"
+			],
+			[
+				"detec",
+				"lucanode/training/detection.py"
+			],
+			[
+				"unet",
+				"lucanode/models/unet.py"
+			],
+			[
+				"detect",
+				"lucanode/training/detection.py"
+			],
+			[
+				"loader",
+				"lucanode/loader.py"
+			],
+			[
+				"imagefi",
+				"lucanode/preprocessing/image_filters.py"
+			],
+			[
+				"filte",
+				"lucanode/preprocessing/image_filters.py"
+			],
+			[
+				"loa",
+				"lucanode/loader.py"
+			],
+			[
+				"dete",
+				"lucanode/training/detection.py"
+			],
+			[
+				"trai",
+				"train.py"
+			],
+			[
+				"tra",
+				"train.py"
+			],
+			[
+				"ima",
+				"lucanode/preprocessing/image_filters.py"
+			],
+			[
+				"env",
+				"environment-cpu.yml"
+			],
+			[
+				"envi",
+				"environment.yml"
+			],
+			[
+				"dock",
+				"Dockerfile"
+			],
+			[
+				"vgg",
+				"vgg16bn.py"
+			],
+			[
+				"uti",
+				"utils.py"
+			],
+			[
+				"paper",
+				"paper.md"
+			],
+			[
+				"bib",
+				"paper.bib"
+			],
+			[
+				"paperb",
+				"paper.bib"
+			],
+			[
+				"pap",
+				"paper.md"
+			],
+			[
+				"pape",
+				"paper.md"
+			],
+			[
+				"read",
+				"README.md"
+			],
+			[
+				"",
+				"compression.py"
+			],
+			[
+				"compre",
+				"compression.py"
+			],
+			[
+				"metho",
+				"method.txt"
+			],
+			[
+				"data",
+				"dataset_final.csv"
+			],
+			[
+				"datas",
+				"dataset.csv"
+			],
+			[
+				"ulr",
+				"urls.csv"
+			],
+			[
+				"econo",
+				"dataset/journal_of_economic_literature.csv"
+			],
+			[
+				"ameri",
+				"dataset/journal_of_the_american_mathematical_society.csv"
+			],
+			[
+				"anna",
+				"dataset/annals_of_mathematics.csv"
+			],
+			[
+				"jou",
+				"journal_of_sex_research.csv"
+			],
+			[
+				"jour",
+				"journal_of_sex_research.csv"
+			],
+			[
+				"jo",
+				"journal_of_sex_research.csv"
+			],
+			[
+				"scho",
+				"scholar.py"
+			],
+			[
+				"inter",
+				"international_social_science_journal.csv"
+			],
+			[
+				"meth",
+				"method.txt"
+			],
+			[
+				"recover",
+				"ex7/recoverData.m"
+			],
+			[
+				"projectda",
+				"ex7/projectData.m"
+			],
+			[
+				"binaryfor",
+				"pyndelbrot/binary_format.py"
+			],
+			[
+				"test",
+				"tests/test_binary_format.py"
+			],
+			[
+				"decodi",
+				"pyndelbrot/decoding.py"
+			],
+			[
+				"binar",
+				"pyndelbrot/binary_format.py"
+			],
+			[
+				"conte",
+				"tests/context.py"
+			],
+			[
+				"init",
+				"tests/__init__.py"
+			],
+			[
+				"wolfser",
+				"wolf_sheep/wolf_sheep/server.py"
+			],
+			[
+				"shippa",
+				"test/utils/shippable/shippable.sh"
+			],
+			[
+				"testyu",
+				"test/units/modules/packaging/os/test_yum.py"
+			],
+			[
+				"mavena",
+				"lib/ansible/modules/packaging/language/maven_artifact.py"
+			],
+			[
+				"ansiblemodulebasic",
+				"lib/ansible/module_utils/basic.py"
+			],
+			[
+				"moduleutilsu",
+				"lib/ansible/module_utils/urls.py"
+			],
+			[
+				"testyum",
+				"test/units/modules/packaging/os/test_yum.py"
+			],
+			[
+				"mavenart",
+				"lib/ansible/modules/packaging/language/maven_artifact.py"
+			],
+			[
+				"test_",
+				"test/units/inventory/test_inventory.py"
+			],
+			[
+				"maven",
+				"lib/ansible/modules/packaging/language/maven_artifact.py"
+			],
+			[
+				"readme",
+				"test/README.md"
+			],
+			[
+				"ogistic",
+				"02_logistic_regression.py"
+			],
+			[
+				"ite",
+				"items.py"
+			],
+			[
+				"cofico",
+				"cofiCostFunc.m"
+			],
+			[
+				"selec",
+				"selectThreshold.m"
+			],
+			[
+				"mu",
+				"multivariateGaussian.m"
+			],
+			[
+				"es",
+				"estimateGaussian.m"
+			],
+			[
+				"proje",
+				"projectData.m"
+			],
+			[
+				"pca",
+				"pca.m"
+			],
+			[
+				"feature",
+				"featureNormalize.m"
+			],
+			[
+				"ex7",
+				"ex7_pca.m"
+			],
+			[
+				"findc",
+				"findClosestCentroids.m"
+			],
+			[
+				"kme",
+				"kMeansInitCentroids.m"
+			],
+			[
+				"computecen",
+				"computeCentroids.m"
+			],
+			[
+				"findcl",
+				"findClosestCentroids.m"
+			],
+			[
+				"subm",
+				"submit.m"
+			],
+			[
+				"emailfe",
+				"emailFeatures.m"
+			],
+			[
+				"ex6",
+				"ex6_spam.m"
+			],
+			[
+				"proce",
+				"processEmail.m"
+			],
+			[
+				"para",
+				"dataset3Params.m"
+			],
+			[
+				"svmpred",
+				"svmPredict.m"
+			],
+			[
+				"visua",
+				"visualizeBoundary.m"
+			],
+			[
+				"svmtr",
+				"svmTrain.m"
+			],
+			[
+				"svm",
+				"svmTrain.m"
+			],
+			[
+				"dat",
+				"dataset3Params.m"
+			],
+			[
+				"vi",
+				"visualizeBoundary.m"
+			],
+			[
+				"vis",
+				"visualizeBoundary.m"
+			],
+			[
+				"gau",
+				"gaussianKernel.m"
+			],
+			[
+				"nn",
+				"nnCostFunction.m"
+			],
+			[
+				"che",
+				"checkNNGradients.m"
+			],
+			[
+				"compu",
+				"computeNumericalGradient.m"
+			],
+			[
+				"check",
+				"checkNNGradients.m"
+			],
+			[
+				"rand",
+				"randInitializeWeights.m"
+			],
+			[
+				"sigmo",
+				"sigmoidGradient.m"
+			],
+			[
+				"nnc",
+				"nnCostFunction.m"
+			],
+			[
+				"ex4",
+				"ex4.m"
+			],
+			[
+				"onve",
+				"oneVsAll.m"
+			],
+			[
+				"ex3",
+				"ex3.m"
+			],
+			[
+				"dida",
+				"displayData.m"
+			],
+			[
+				"ex2reg",
+				"ex2_reg.m"
+			],
+			[
+				"pred",
+				"predict.m"
+			],
+			[
+				"mapfea",
+				"mapFeature.m"
+			],
+			[
+				"ex2re",
+				"ex2_reg.m"
+			],
+			[
+				"mapfeature",
+				"mapFeature.m"
+			],
+			[
+				"plotde",
+				"plotDecisionBoundary.m"
+			],
+			[
+				"costfuncre",
+				"costFunctionReg.m"
+			],
+			[
+				"mapfe",
+				"mapFeature.m"
+			],
+			[
+				"pre",
+				"predict.m"
+			],
+			[
+				"cstfunc",
+				"costFunction.m"
+			],
+			[
+				"plotda",
+				"plotData.m"
+			],
+			[
+				"ex2",
+				"ex2.m"
+			],
+			[
+				"gradie",
+				"gradientDescent.m"
+			],
+			[
+				"com",
+				"computeCost.m"
+			],
+			[
+				"lotdata",
+				"plotData.m"
+			],
+			[
+				"war",
+				"warmUpExercise.m"
+			],
+			[
+				"ipyn",
+				"ex1.ipynb"
+			],
+			[
+				"ex1",
+				"ex1.m"
+			],
+			[
+				"linearuni",
+				"analysis/linear_regression_univar.py"
+			],
+			[
+				"v00",
+				"idealisto/schema/v002.sql"
+			],
+			[
+				"v",
+				"idealisto/schema/v001.sql"
+			],
+			[
+				"pipe",
+				"idealisto/pipelines.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 89.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"gbsendb",
+				"GBSendByte"
+			],
+			[
+				"GBC",
+				"GBC_DATA"
+			],
+			[
+				"gbcse",
+				"GBSendPacket"
+			],
+			[
+				"gbsendpa",
+				"GBSendPacket"
+			],
+			[
+				"gbsend",
+				"GBSendPacket"
+			]
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 280.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
