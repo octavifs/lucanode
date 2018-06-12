@@ -1,4 +1,3 @@
 # Evaluating lucanode on EURECAT
-\clearpage
 
-TODO
+TODO. Or probably not, let's be honest.

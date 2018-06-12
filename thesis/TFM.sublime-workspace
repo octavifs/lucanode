@@ -519,6 +519,96 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "/Users/octavi/lucanode/thesis/06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md",
+			"settings":
+			{
+				"buffer_size": 3678,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/07-evaluating_lucanode_on_LUNA/evaluating_lucanode_on_LUNA.md",
+			"settings":
+			{
+				"buffer_size": 600,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/08-evaluating_lucanode_on_EURECAT/evaluating_lucanode_on_EURECAT.md",
+			"settings":
+			{
+				"buffer_size": 74,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/10-general_discussion/general_discussion.md",
+			"settings":
+			{
+				"buffer_size": 41,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/01-introduction/introduction.md",
+			"settings":
+			{
+				"buffer_size": 1943,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge/the_LUNA_grand_challenge.md",
+			"settings":
+			{
+				"buffer_size": 1549,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/03-lung_segmentation/lung_segmentation.md",
+			"settings":
+			{
+				"buffer_size": 2802,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/04-nodule_segmentation/nodule_segmentation.md",
+			"settings":
+			{
+				"buffer_size": 4379,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/octavi/lucanode/thesis/05-false_positive_reduction/false_positive_reduction.md",
+			"settings":
+			{
+				"buffer_size": 16015,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 7 files for \"\\clearpage\" (regex)\n\n0 matches\n\nSearching 30 files for \"\\\\clearpage\" (regex)\n\n/Users/octavi/lucanode/thesis/01-introduction/introduction.md:\n    1  # Introduction\n    2: \\clearpage\n    3  \n    4  Some brief intro as to how I am planning to organize this thing. Let's try to add a citation @Jacobs2015. And I've added something else, let's see if the auto build system picks it up. Does it now? Maybe it is working?\n\n/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge/the_LUNA_grand_challenge.md:\n    1  # The LUNA grand challenge\n    2: \\clearpage\n    3  \n    4  This chapter will serve as an introduction to what is the LUNA grand challenge, its dataset, competition tracks and metrics. After that is out of the way, I'll go over the current top 20 and do a survey of the different techniques that compound the state of the art for this kind of problem. This will serve as an introduction to what I amb about to do.\n\n/Users/octavi/lucanode/thesis/03-lung_segmentation/lung_segmentation.md:\n    1  # Lung segmentation\n    2: \\clearpage\n    3  \n    4  TODO\n\n/Users/octavi/lucanode/thesis/04-nodule_segmentation/nodule_segmentation.md:\n    1  # Nodule segmentation\n    2: \\clearpage\n    3  \n    4  TODO\n\n/Users/octavi/lucanode/thesis/05-false_positive_reduction/false_positive_reduction.md:\n    1  # False Positive reduction\n    2: \\clearpage\n    3  \n    4  ## Introduction\n\n/Users/octavi/lucanode/thesis/06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md:\n    1  # Integrating the CAD pipeline\n    2: \\clearpage\n    3  \n    4  Cover the necessary steps to package the system as a readymade product. Basically we have to automate\n\n/Users/octavi/lucanode/thesis/07-evaluating_lucanode_on_LUNA/evaluating_lucanode_on_LUNA.md:\n    1  # Evaluating lucanode on LUNA\n    2: \\clearpage\n    3  \n    4  ![FROC curves and averaged sensitivity at selected FP rates of the handpicked features classifier](froc_handpicked.png)\n\n/Users/octavi/lucanode/thesis/08-evaluating_lucanode_on_EURECAT/evaluating_lucanode_on_EURECAT.md:\n    1  # Evaluating lucanode on EURECAT\n    2: \\clearpage\n    3  \n    4  TODO\n\n/Users/octavi/lucanode/thesis/09-conclusions/conclusions.md:\n    1  # Conclusions {.unnumbered}\n    2: \\clearpage\n    3  \n    4  TODO\n\n/Users/octavi/lucanode/thesis/10-general_discussion/general_discussion.md:\n    1  # General discussion {.unnumbered}\n    2: \\clearpage\n    3  \n    4  TODO\n\n10 matches across 10 files\n",
+			"settings":
+			{
+				"buffer_size": 2452,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -528,9 +618,45 @@
 	"command_palette":
 	{
 		"height": 59.0,
-		"last_filter": "python",
+		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"table editor mu",
+				"Table Editor: Set table syntax 'MultiMarkdown' for current view"
+			],
+			[
+				"table editor",
+				"Table Editor: Show demo film in new scratch view"
+			],
+			[
+				"multima",
+				"Set Syntax: MultiMarkdown"
+			],
+			[
+				"tablee",
+				"Table Editor: Enable for current syntax"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"format",
+				"MarkdownTableFormatter: format table"
+			],
+			[
+				"table",
+				"MarkdownTableFormatter: format table"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"python",
 				"Set Syntax: Python"
@@ -580,10 +706,6 @@
 				"Convert Case: Lower Case"
 			],
 			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
 				"spac",
 				"Indentation: Convert to Spaces"
 			],
@@ -606,10 +728,6 @@
 			[
 				"java",
 				"Set Syntax: Java"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"plain",
@@ -772,10 +890,6 @@
 				"Indentation: Reindent Lines"
 			],
 			[
-				"inst",
-				"Package Control: Install Package"
-			],
-			[
 				"tog",
 				"Toggle Comment"
 			],
@@ -874,10 +988,42 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/octavi/lucanode/thesis"
+		"/Users/octavi/lucanode/thesis",
+		"/Users/octavi/lucanode/thesis/00-abstract",
+		"/Users/octavi/lucanode/thesis/01-introduction",
+		"/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge",
+		"/Users/octavi/lucanode/thesis/03-lung_segmentation",
+		"/Users/octavi/lucanode/thesis/04-nodule_segmentation",
+		"/Users/octavi/lucanode/thesis/05-false_positive_reduction",
+		"/Users/octavi/lucanode/thesis/06-integrating_the_CAD_pipeline",
+		"/Users/octavi/lucanode/thesis/07-evaluating_lucanode_on_LUNA",
+		"/Users/octavi/lucanode/thesis/08-evaluating_lucanode_on_EURECAT",
+		"/Users/octavi/lucanode/thesis/09-conclusions",
+		"/Users/octavi/lucanode/thesis/10-general_discussion"
 	],
 	"file_history":
 	[
+		"/Users/octavi/lucanode/thesis/TFM.pdf",
+		"/Users/octavi/lucanode/thesis/08-evaluating_lucanode_on_EURECAT/evaluating_lucanode_on_EURECAT.md",
+		"/Users/octavi/lucanode/thesis/09-conclusions/conclusions.md",
+		"/Users/octavi/lucanode/thesis/10-general_discussion/general_discussion.md",
+		"/Users/octavi/lucanode/thesis/README.md",
+		"/Users/octavi/lucanode/thesis/07-evaluating_lucanode_on_LUNA/evaluating_lucanode_on_LUNA.md",
+		"/Users/octavi/Dropbox/CBEM/thesis/lucanode/visualize_candidate_results.ipynb",
+		"/Users/octavi/lucanode/thesis/12-performance_assessment_ldshake/performance_assessment_ldshake.md",
+		"/Volumes/DATASETS/LUNA/results/evaluation_nodule_segmentation_no_augmentation_normalization_binary_crossentropy_7626e71/candidates_subset0.csv",
+		"/Users/octavi/lucanode/thesis/00-abstract/abstract.md",
+		"/Users/octavi/lucanode/thesis/build.py",
+		"/Users/octavi/lucanode/thesis/title.md",
+		"/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge/the_LUNA_grand_challenge.md",
+		"/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge_a_survey_of_the_state_of_the_art/the_LUNA_grand_challenge_a_survey_of_the_state_of_the_art.md",
+		"/Users/octavi/lucanode/thesis/TFM.sublime-project",
+		"/Users/octavi/lucanode/thesis/library.bib",
+		"/Users/octavi/lucanode/thesis/01-introduction/introduction.md",
+		"/Users/octavi/lucanode/thesis/03-lung_segmentation/lung_segmentation.md",
+		"/Users/octavi/lucanode/thesis/04-nodule_segmentation/nodule_segmentation.md",
+		"/Users/octavi/lucanode/thesis/05-false_positive_reduction/false_positive_reduction.md",
+		"/Users/octavi/lucanode/thesis/06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md",
 		"/Users/octavi/Desktop/thesis.md",
 		"/Volumes/DATASETS/LUNA/CSVFILES/candidates_V2.csv",
 		"/Users/octavi/Desktop/experiments.txt",
@@ -984,38 +1130,19 @@
 		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/binary_format.py",
 		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/context.py",
 		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/__init__.py",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/__init__.py",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/decoding.py",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_decoding.py",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_binary_format.py",
-		"/Users/octavi/Dropbox/CBEM/Research Methodologies/form_research_fraud.md",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/test_fractal_image_save_and_load.frac",
-		"/usr/local/bin/pygmentize",
-		"/usr/local/bin/pip",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/pyndelbrot/evaluation.py",
-		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/README.md",
-		"/Users/octavi/Documents/CMTP/fakku/resources.txt",
-		"/Users/octavi/projects/CBEM/data_password.txt",
-		"/Users/octavi/Desktop/wifi_keys.txt",
-		"/Users/octavi/projects/deliveroo/receipt_2017-07-24.html",
-		"/Users/octavi/Desktop/puta_merda_carta.md",
-		"/Users/octavi/projects/tensorflow/tensorflow/python/training/monitored_session_test.py",
-		"/Users/octavi/projects/deliveroo/deliveroo.yaml",
-		"/Users/octavi/Desktop/UPF/statement_of_purpose_upf.md",
-		"/Users/octavi/projects/deliveroo/receipt.htm",
-		"/Users/octavi/projects/deliveroo/receipt copy.htm",
-		"/Users/octavi/Desktop/resignation.md",
-		"/Users/octavi/Desktop/statement_of_purpose_zurich.md"
+		"/Users/octavi/Dropbox/CBEM/Complexity Science/fractal_image_compression/tests/__init__.py"
 	],
 	"find":
 	{
-		"height": 27.0
+		"height": 39.0
 	},
 	"find_in_files":
 	{
 		"height": 101.0,
 		"where_history":
 		[
+			"/Users/octavi/lucanode/thesis",
+			"/Users/octavi/lucanode/thesis/05-false_positive_reduction"
 		]
 	},
 	"find_state":
@@ -1023,6 +1150,39 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Short Heading",
+			"usual",
+			"typic",
+			" .",
+			"unet",
+			"50%",
+			"to ",
+			"Dou",
+			"something",
+			"\\\\clearpage",
+			"\\clearpage",
+			"[ROC",
+			"roc",
+			"ROC",
+			"roc",
+			"ROC",
+			"roc",
+			"ROC",
+			"roc_",
+			" default |",
+			", ",
+			"frequency",
+			"1, 0",
+			"squareness",
+			"1, 0",
+			"squareness",
+			"0, 2",
+			"extent",
+			"layers",
+			"diameter_mm",
+			"ax",
+			"@",
+			"davinia"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1040,8 +1200,346 @@
 	"groups":
 	[
 		{
+			"selected": 7,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "/Users/octavi/lucanode/thesis/06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3678,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1082,
+								1082
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 85.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/octavi/lucanode/thesis/07-evaluating_lucanode_on_LUNA/evaluating_lucanode_on_LUNA.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 600,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								416,
+								416
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/octavi/lucanode/thesis/08-evaluating_lucanode_on_EURECAT/evaluating_lucanode_on_EURECAT.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 74,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								73,
+								73
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/octavi/lucanode/thesis/10-general_discussion/general_discussion.md",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 41,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								41,
+								41
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/Users/octavi/lucanode/thesis/01-introduction/introduction.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1943,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								512,
+								512
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/Users/octavi/lucanode/thesis/02-the_LUNA_grand_challenge/the_LUNA_grand_challenge.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1549,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1549,
+								1549
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/Users/octavi/lucanode/thesis/03-lung_segmentation/lung_segmentation.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2802,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								574,
+								2802
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/octavi/lucanode/thesis/04-nodule_segmentation/nodule_segmentation.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4379,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1153,
+								1153
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 117.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/Users/octavi/lucanode/thesis/05-false_positive_reduction/false_positive_reduction.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16015,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12499,
+								12499
+							]
+						],
+						"settings":
+						{
+							"enable_table_editor": true,
+							"syntax": "Packages/Markdown/MultiMarkdown.sublime-syntax",
+							"table_editor_syntax": "MultiMarkdown"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2943.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2452,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										193,
+										203
+									],
+									[
+										567,
+										577
+									],
+									[
+										1055,
+										1065
+									],
+									[
+										1200,
+										1210
+									],
+									[
+										1360,
+										1370
+									],
+									[
+										1543,
+										1553
+									],
+									[
+										1809,
+										1819
+									],
+									[
+										2102,
+										2112
+									],
+									[
+										2237,
+										2247
+									],
+									[
+										2393,
+										2403
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								230,
+								230
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 54.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1097,6 +1595,82 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"fpred",
+				"05-false_positive_reduction/false_positive_reduction.md"
+			],
+			[
+				"cadpi",
+				"06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md"
+			],
+			[
+				"integra",
+				"06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md"
+			],
+			[
+				"pipe",
+				"06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md"
+			],
+			[
+				"fpre",
+				"05-false_positive_reduction/false_positive_reduction.md"
+			],
+			[
+				"pipel",
+				"06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md"
+			],
+			[
+				"read",
+				"README.md"
+			],
+			[
+				"07",
+				"07-evaluating_lucanode_on_LUNA/evaluating_lucanode_on_LUNA.md"
+			],
+			[
+				"tit",
+				"title.md"
+			],
+			[
+				"build",
+				"build.py"
+			],
+			[
+				"per",
+				"12-performance_assessment_ldshake/performance_assessment_ldshake.md"
+			],
+			[
+				"tfm",
+				"TFM.sublime-project"
+			],
+			[
+				"bui",
+				"build.py"
+			],
+			[
+				"intr",
+				"01-introduction/introduction.md"
+			],
+			[
+				"intro",
+				"01-introduction/introduction.md"
+			],
+			[
+				"libra",
+				"library.bib"
+			],
+			[
+				"integr",
+				"06-integrating_the_CAD_pipeline/integrating_the_CAD_pipeline.md"
+			],
+			[
+				"coc",
+				"09-conclusions/conclusions.md"
+			],
+			[
+				"endin",
+				"10-general_discussion/general_discussion.md"
+			],
 			[
 				"exper",
 				"~/Desktop/experiments.txt"
@@ -1228,10 +1802,6 @@
 			[
 				"pape",
 				"paper.md"
-			],
-			[
-				"read",
-				"README.md"
 			],
 			[
 				"",
@@ -1536,78 +2106,6 @@
 			[
 				"ex2re",
 				"ex2_reg.m"
-			],
-			[
-				"mapfeature",
-				"mapFeature.m"
-			],
-			[
-				"plotde",
-				"plotDecisionBoundary.m"
-			],
-			[
-				"costfuncre",
-				"costFunctionReg.m"
-			],
-			[
-				"mapfe",
-				"mapFeature.m"
-			],
-			[
-				"pre",
-				"predict.m"
-			],
-			[
-				"cstfunc",
-				"costFunction.m"
-			],
-			[
-				"plotda",
-				"plotData.m"
-			],
-			[
-				"ex2",
-				"ex2.m"
-			],
-			[
-				"gradie",
-				"gradientDescent.m"
-			],
-			[
-				"com",
-				"computeCost.m"
-			],
-			[
-				"lotdata",
-				"plotData.m"
-			],
-			[
-				"war",
-				"warmUpExercise.m"
-			],
-			[
-				"ipyn",
-				"ex1.ipynb"
-			],
-			[
-				"ex1",
-				"ex1.m"
-			],
-			[
-				"linearuni",
-				"analysis/linear_regression_univar.py"
-			],
-			[
-				"v00",
-				"idealisto/schema/v002.sql"
-			],
-			[
-				"v",
-				"idealisto/schema/v001.sql"
-			],
-			[
-				"pipe",
-				"idealisto/pipelines.py"
 			]
 		],
 		"width": 0.0

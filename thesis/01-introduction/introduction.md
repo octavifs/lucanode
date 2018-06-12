@@ -1,5 +1,4 @@
 # Introduction
-\clearpage
 
 Some brief intro as to how I am planning to organize this thing. Let's try to add a citation @Jacobs2015. And I've added something else, let's see if the auto build system picks it up. Does it now? Maybe it is working?
 
