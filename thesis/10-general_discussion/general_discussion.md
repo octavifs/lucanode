@@ -1,3 +1,0 @@
-# General discussion {.unnumbered}
-
-TODO

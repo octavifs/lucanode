@@ -1,5 +1,8 @@
 # Abstract  {.unnumbered}
 
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
 This Master's final thesis details the implementation of a computer-aided diagnosis (CADx) for lung nodule detection. The aim of this system is to provide assistance to radiologists for early diagnosis of lung cancer. The system's pipeline consists of 4 main steps:
 
 - scan preprocessing

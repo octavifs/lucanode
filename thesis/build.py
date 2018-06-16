@@ -54,7 +54,6 @@ pandoc_args = [
     '--mathjax',
     '--bibliography', bibliography,
     '--csl', citation_style,
-    '--toc',
     '--number-sections',
     '--top-level-division=chapter',
     '-o', 'TFM.pdf'
