@@ -1,8 +1,8 @@
 ---
-title: Automatic lung nodule detection
+title: "lucanode: automatic lung cancer nodule detection"
 author: Octavi Font
 date: June, 2018
 ...
 
-\pagenumbering{roman}
+\pagenumbering{gobble}
 \tableofcontents

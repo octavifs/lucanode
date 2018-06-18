@@ -1,21 +1,44 @@
 # Introduction
+\setcounter{page}{1}
+\pagenumbering{arabic}
 \newpage
-
-Some brief intro as to how I am planning to organize this thing. Let's try to add a citation @Jacobs2015. And I've added something else, let's see if the auto build system picks it up. Does it now? Maybe it is working?
 
 ## Clinical context
 
 ### Lung cancer
-Lung cancer is the most deadly cancer in the world. Bring some figures and talk about trends. Explain why this was collected, essentially the whole reasoning behind it was to provide a good benchmark to easily compare CAD systems
+
+Mention @Siegel2018 for the cancer statistics and initial paragraphs.
+
+Lung cancer is the most deadly cancer in both men and women worldwide1. It is the second most common cancer in both men and women, trailing prostate cancer for men, and breast cancer for women1. In the Netherlands, more than 10,000 people die of lung cancer every year2. The Dutch Cancer Society estimates that lung cancer will account for 25% of all cancer-related deaths in 20152. In the United States, the American Cancer Society estimates a similar percentage for 2015: 27%1. Figure 1.1 shows the estimated number of new cancer cases and deaths in men and women in the United States in 2015.
+The 5-year relative survival rate for all stages combined is only 17%1. This low
+rate can be largely attributed to the fact that at present, only 15% of all lung cancers are diagnosed in an early stage1. The reason for this is that symptoms usually do not occur until the cancer is in an advanced stage. If lung cancer is detected in an early stage when the disease is still localized and more curative treatment options are available, the 5-year relative survival rate is 54%1. Therefore, early detection of lung cancer is of major importance to reduce lung cancer mortality.
+By far the most important risk factor for lung cancer is tobacco use. The risk in-
+creases both with quantity and duration of smoking. An estimated 87% of all lung cancer deaths are caused by cigarette smoking3. Therefore, complete banning of to- bacco use would be the best recipe to reduce lung cancer mortality. Although the risks of smoking are well-known, it remains a major cause of the increasing global burden of cancer. Other risk factors for lung cancer are exposure to asbestos, expo- sure to radon, and air pollution.
 
 ### Computed Tomography
 Basically talk about the technique and how it has been changing diagnosis recently.
+
+|       Substance       |      HU      |
+| --------------------: | :----------- |
+|                   Air | -1000        |
+|                   Fat | -120 to -90  |
+| Soft Tissue, Contrast | +100 to +300 |
+|                 Water | 0            |
+|                 Blood | +13 to +50   |
+|       Lung parenchyma | -700 to -600 |
+|                Muscle | +35 to +55   |
+|      Cancellouus bone | +700         |
+|         Cortical bone | +3000        |
+
+: Houndsfield Units range of different body tissues and fluids.
 
 ### Lung cancer screening with CT
 Talk about the NLST study and NELSON. Reduction of 20% in mortality if screened, so early detection is important to improve the outcomes.
 
 ### Lung nodules
 Explain nodule types. Solid and subsolid.
+
+![Different types of lung nodules. *left*: solid nodule, *middle*: part-solid nodule, *right*: non-solid nodule. Image from @Jacobs2015](nodule_types.png)
 
 ## Lung nodule CAD
 ### Objectives
@@ -24,27 +47,6 @@ Explain why it would be useful (reduce workload, reduce intra-variability for ra
 ### Shortcomings
 Explain what are the main things that fail
 
-### Pipeline
-Even though there has been much effort in developing new techniques to improve the performance of CAD systems due to the availability of annotated datasets and challenges (NLST, ISBI, LUNA, DSB2017), the published systems tend to be brittle and very much focused on demonstrating good results on those specific challenges but useless as an integrated system. Also, what is not available tends to be proprietary systems, which might be good, but who knows really.
-
-![the lucanode pipeline](lucanode_pipeline.png){ width=40% }
-
-One of the improvements that I wanted to bring to the state of the art was to prepare a system which could be easily deployed in a real system. To achieve this I had to automate the scan preprocessing and prepare a full pipeline that could later on be integrated in a real system. In fact, this integration with a system has been performed by Albert <!--TODO put ref -->, that has a queue which picks up the scan and returns a CSV with the annotated nodules to check for.
-
-What do we need to do:
-
-- preprocessing: basically reading the ct scan in a SimpleITK compatible format and rescale it to 1x1x1mm
-- lung segmentation: using the input from before, segment the lung and get a segmentation mask
-- nodule segmentation: using the isotropic scan and the lung segmentation, compute the segmentation mask for the nodules, then measure the centroids of the labels and convert those coordinates to real world coordinates.
-- fp reduction: Using the scan and the centroids in the previous step, apply the nodule classifier and retrieve a probability for each of the nodules. Once we have this probability per candidate, discard any that are below a required threshold. If instead of using a probability threshold what we are interested is in a false positive rate, use the numbers in the evaluation phase to basically determine how the probability maps to a specific FPR, and adjust the output candidates with that.
-
-To run this basically I've packaed everything in a conda environment. This has allowed me to list all the necessary packages and provide an easy way to create environments with all the necessary dependencies, even stuff like CUDA libraries, which is not native python, can be easily installed using conda. This also makes it very easy to then create a Docker image that has all the necessary packages to run this stuff.
-
-What else? Well, the docker image contains the weights of the different neural networks. I've basically just included the best network for each of the steps, based on the evaluation of the results. Both the code, dependencies and weights is included in a Docker image, which can also have GPU support (very much recommended) by using [nvidia-docker](https://github.com/NVIDIA/nvidia-docker).
-
-Once that is built, we have a ready to go image, which only needs to mount 2 volumes (folders) for the input image and the output result. Then it's just a matter of running a command and all of this code can be easily run. Apart from the ease in reproducibility (not only the final script can be executed, but everything else, such as evaluation scripts and the like), we gain a very convenient way to distribute the results and an even better way to test our system in other datasets with minimum hassle, since the whole pipeline has been integrated.
-
-Currently on an i7 7700, 32GB of RAM, GTX 1080Ti, evaluating a scan from start to finish requires around 2mins of processing time.
 
 <!--TODO basically put some real numbers and also put an example of the comand and mention how big the image would be for all of this to work. Break down the results step by step as well (performance wise) -->
 
@@ -89,19 +91,30 @@ Talk about the tracks and metrics. Again, this appears in @Arindra2017, so I don
 Interesting to go over the top 20 of LUNA as it stands right now. Thankfully most of the systems are closed so I don't have to explain them, but for the open ones, it would be good to go over the methods they present, and basically argument why I chose what I did
 Talk about the top 20. Basically put a table with the methods, describe them slightly. Then divide method by groups and expand more on that.
 
+![An annotated lung nodule in the LUNA dataset. \label{annotated_lung_nodule}](annotated_lung_nodule.png)
+
 ### Nodule detection track
 Review of the top20. Cover here any deep learning content I might have to.
 
 ### FP reduction
 Review of the top20 (again paper and all). Basically cover here any deep learning content I might have to.
 
+<!-- Can't finish this on time
 ## Techniques?
 ### Image registration
 LUNA and other registration methods?
 ### Image segmentation
 Talk about LUNA and radiomics?
+
+![Overview of the U-Net architecture. Image from: @Ronneberger2015. \label{unet_architecture}](unet_architecture.png){ width=100% }
+
 ### Image recognition
-RESNET?
+![convolutional layer](convolutional_layer.png){ width=50% }
+
+![Architecture of a residual block. Image from: @Wu2017. \label{residual_block}](residual_block.png){ width=50% }
+
+![ResNet architecture vs other image recognition models. Image from: @Wu2017. \label{resnet_architecture}](resnet_architecture.png){ width=50% }
+-->
 
 ## Outline
 Talk about the chapters, and how the work is organized.

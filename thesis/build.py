@@ -33,7 +33,7 @@ def unsymlink(link):
 # Variables with binary location, bibliography and citation styles
 pandoc_bin = '/usr/local/bin/pandoc'
 bibliography = 'library.bib'
-citation_style = 'acm-siggraph.csl'
+citation_style = 'nature.csl'
 
 # List markdown files in order
 markdown_files = ['title.md']

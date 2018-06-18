@@ -22,6 +22,11 @@ Lower lung lobes are generally those with lower Dice scores (see top left and ri
 
 ![Axial slices of a lung with both masks superposed. The blue segmentation corresponds to the ground truth used to train the U-Net, while the red segmentation is the prediction returned by the model. \label{lung_segmentation}](lung_segmentation.png){ width=75% }
 
+### Discussion
+The initial approach we wanted to follow for the lung segmentation was to create a multiatlas lung segmentation such as the ones described in \[@Rohlfing2004, @VanRikxoort2009a\]. Still, due to the required computational time (registration libraries only operate on CPU) and the fact that lung segmentation has a relative low impact in the final score of the system, we chose to employ the same architecture we had been using to segment nodules for the lungs themselves.
+
+Perhaps unsurprising, but still very interesting, to demonstrate the high degree of transferability of the network architecture to different tasks, just by adjusting the input masks. Even the issues the network was currently facing segmenting the lower lobule could very likely be fixed by rebalancing the dataset to oversample that part of the lung. Also, there are some other easily corrected errors, such as the removal of holes inside masks. Even after applying these fixes, we could still bring things further by applying some image preprocessing to increase the contrast of the image, or applying augmentation to safely oversample troublesome slices.
+
 
 ## Nodule detection
 
@@ -93,41 +98,38 @@ Finally, we compared the individual performance of our best segmentation network
 : Candidate detection systems performance as reported by @Arindra2017. Even though each individual system is offering worse performance than our custom U-Net, an ensemble combining them reported sensitivity rates up to 0.983. \label{nodule_detection_luna_perf_table}
 
 
-## FP Reduction
-![ROC curves and AUC of the handpicked feature classifiers \label{roc_handpicked}](roc_handpicked.png)
+## False positive reduction
 
-Explain how the classifiers compare. Basically explain the overfitting effect of the tree classifiers and how the boosting algorithms seem to be best and overfit less
+In Figure \ref{roc_handpicked} we have plotted the resulting ROC curve for the different classifiers trained on the handpicked features of the nodule segmentation. Both classifiers based on trees (decision tree and random forest) overfit, and while the logistic regression does not, it doesn't perform as well as the boosting classifiers.
 
-![histogram pdf handpicked features \label{probability_distribution_handpicked}](probability_distribution_handpicked.png)
+![ROC curves and AUC of the handpicked feature classifiers. \label{roc_handpicked}](roc_handpicked.png)
 
-Based on the probability distribution of the histogram we can demonstrate that both boosting algorithms are the ones that are better at separating between both groups. Basically it can be seen on the graphs that they follow two different distributions, with the least overlap between them.
+In Figure \ref{probability_distribution_handpicked} we have the probability histogram of both nodules and non-nodules. As expected, even though the distributions are different in all classifiers, only in the boosting algorithms there is a clear distinction between the two classes, which translates to its performance in the ROC curve.
 
-![ROC curves and AUC of the classifier based on radiomics \label{roc_radiomics}](roc_radiomics.png)
+![histogram pdf handpicked features. \label{probability_distribution_handpicked}](probability_distribution_handpicked.png)
 
-![histogram pdf radiomics classifier \label{probability_distribution_radiomics}](probability_distribution_radiomics.png)
+We've performed the same tests on the radiomics based classifier, as seen in Figure \ref{roc_radiomics}. In this plot, instead of testing different classifiers, we've decided to plot the ROC of the same classifier trained on different subsets of radiomic features. As we can see, having more of them does not necessarily translate to better performance. In fact, there is a sweet spot around 20 (vs the original 105). Still, the same figure also shows that the radiomics classifier is lagging behind the one based on only 6 handpicked features (Figure \ref{probability_distribution_handpicked}).
 
-![ROC curves and AUC of the residual networks \label{roc_resnet}](roc_resnet.png)
+![ROC curves and AUC of the radiomics based classifiers. \label{roc_radiomics}](roc_radiomics.png)
 
-In here the distinction is not as straightforward. There is basically a sweet spot at 50. 101 and 152 seem too deep for the amount of data we were training it with (just 35% of the half a milion annotations we had to start with), and really are not helping much. Basically it plateaus.
+On Figure \ref{roc_resnet} we have the results for a classifier based on a 3D ResNet trained at diferent depths. Apart from offering the best performance of the three systems, the AUC of both training and testing is almost identical, being the set of classifiers with the least amount of overfitting. Still, it should be noted that this classifier model has been trained on a dataset two orders of magnitude larger than the previous two approaches. The ResNet network has signs of saturation as its depth increases. Past 50 layers, AUC slightly decreases, and even during its training phase it was rare for the validation loss to reliably decrease on each epoch.
 
-![histogram pdf residual networks](probability_distribution_resnet.png)
+![ROC curves and AUC of the ResNet based classifiers. \label{roc_resnet}](roc_resnet.png)
 
-Again, put here the probability histograms. In this case, the differences are more subtle, as they should be, since the curves are much closer between them. It should be noted though that the overfitting effect is much lower than what we've observed with the previous method. Again, this is to be expected since we have a much larger dataset to train the classifier with. In fact, paradoxically, the better our segmentation is, the less data we have to train the dataset, which might make our FP reduction worse. Which is why it could be interesting to decouple both parts. At the same time, if we use features engineered from the segmentations, they are coupled through and through, so that approach will always have those limitations.
+In Figure \ref{roc_handpicked_vs_resnet} we have the ResNet 50 and the handpicked based classifiers side by side. As expected, the ResNet has a better AUC and plateaus at a lower false positive rate than the AdaBoost classifier, which is a very desirable property for this kinds of systems.
 
-![ROC curves and AUC comparing the best 2 variations of FP reduction method](roc_comparative.png)
+![ROC curves and AUC comparing the best 2 variations of FP reduction method. \label{roc_handpicked_vs_resnet}](roc_handpicked_vs_resnet.png)
 
-Basically, comparison side by side of both methods. resnet is better, as it should be, since it is a much more complex model, with N features (look up how many, actually), compared to the 6? of the other. Also important, it overfits less, again probably due to availability of data. The differences don't seem that major, but basically they compound with whatever performance the segmentation has, so a few percent points drop on the AUC are important. Also, the slope looks better, as it will be able to achieve better performance at lower FPR, which is very important for a system such as this. We need a slope as flat as possible, so that the results are very good even with very low rates of false positives.
 
 ## LUNA performance comparative
-![FROC curves and averaged sensitivity at selected FP rates of the handpicked features classifier](froc_handpicked.png)
 
-![FROC curves and averaged sensitivity at selected FP rates of the residual networks](froc_resnet.png)
+On Figure \ref{froc_handpicked_vs_resnet} we have plotted the FROC curves of the best two variations of FP reduction systems along with the U-Net nodule segmentation (binary cross entropy loss, normalization, augmentation, three channels and laplacian filters applied). The reported score is an average of the sensitivity at selected FP rates [0.125, 0.25, 0.5, 1, 2, 4 and 8]. Both average false positive ranges and metrics have been set by the LUNA grand challenge to enable fast and objective comparisons between CAD systems.
 
-![FROC curves and averaged sensitivity at selected FP rates comparing the best 2 variations of FP reduction method](froc_comparative.png)
+![FROC curves and averaged sensitivity at selected FPR comparing the best 2 variations of false positive reduction. \label{froc_handpicked_vs_resnet}](froc_handpicked_vs_resnet.png)
 
-I can actually draw the curves manually of different competing systems by retrieving the numbers from the table in the LUNA paper, which really, would be the best approach to show my perf VS other systems.
+Our system, *lucanode*, achieves a top-18 performance in the general LUNA leaderboard (as of June 2018, see Figure \ref{froc_luna_competition}). Even the model with handpicked features would be worthy of a top-20, which is commendable for a system essentially based on a single model. In our favour, we would like to remind that our results come exclusively from the testing split (subset 9 of LUNA), while the other systems are the results of a model trained on a 10-fold cross validation and evaluated over a 1000 nodules with bootstrapping. We would expect that training the existing models in this manner, plus using the higher sensitivity segmentation U-Net (with Dice as its loss function) would bring us closer to the top 14. Still, even if we could easily improve the upper bound of our system, the slope of our false positive reduction is too steep compared to *resnet's*, *ZNET's* or *PATech's*, so our performance at lower averages of false positives per scan would still be subpar.
 
-![Best lucanode iteration, trained with bce on segmentation, resnet50 in the FP reduction vs other approaches. I've added top 1, immeddiately below and top14-16, which is more or less where we could reach with some improvements](froc_luna_competition.png)
+All of these results have been obtained with the binary cross entropy variation of the segmentation network. Even though its sensitivity rate was 1.5% lower it was 3 times as accurate, which at the end pushed the overall score slightly above the variation trained with Dice. This also demonstrates that a good segmentation step simplifies the false positive reduction problem.
 
-## Integration into a clinical workflow
-Hello
+![FROC comparison of lucanode with U-Net binary cross entropy + ResNet50 against other LUNA contenders. \label{froc_luna_competition}](froc_luna_competition.png)
+
